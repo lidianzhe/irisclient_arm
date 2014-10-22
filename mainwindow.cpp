@@ -210,6 +210,10 @@ MainWindow::MainWindow(QWidget *parent) :
 #else
     m_curPath = QDir::currentPath();
 #endif
+
+    qDebug()<<"open and recog";
+    open();
+    recog();
 }
 
 MainWindow::~MainWindow()

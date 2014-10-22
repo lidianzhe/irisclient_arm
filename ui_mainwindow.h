@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed Oct 15 23:41:35 2014
+** Created: Wed Oct 22 10:30:54 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -199,7 +199,7 @@ public:
         font1.setPointSize(14);
         font1.setItalic(true);
         checkBox_ContinuousRecog->setFont(font1);
-        checkBox_ContinuousRecog->setChecked(false);
+        checkBox_ContinuousRecog->setChecked(true);
         pushButton_Save = new QPushButton(tab);
         pushButton_Save->setObjectName(QString::fromUtf8("pushButton_Save"));
         pushButton_Save->setGeometry(QRect(560, 600, 81, 51));
@@ -493,7 +493,7 @@ public:
         palette21.setBrush(QPalette::Disabled, QPalette::WindowText, brush3);
         checkBox_AutoStart->setPalette(palette21);
         checkBox_AutoStart->setFont(font1);
-        checkBox_AutoStart->setChecked(false);
+        checkBox_AutoStart->setChecked(true);
         label_10 = new QLabel(tab);
         label_10->setObjectName(QString::fromUtf8("label_10"));
         label_10->setGeometry(QRect(40, 10, 131, 41));
@@ -1487,7 +1487,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "CMIMIR Demo", 0, QApplication::UnicodeUTF8));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Acezen Iris Client", 0, QApplication::UnicodeUTF8));
         checkBox_ContinuousRecog->setText(QApplication::translate("MainWindow", "Continuous Recog", 0, QApplication::UnicodeUTF8));
         pushButton_Save->setText(QApplication::translate("MainWindow", "Save", 0, QApplication::UnicodeUTF8));
         pushButton_Open->setText(QApplication::translate("MainWindow", "Open", 0, QApplication::UnicodeUTF8));

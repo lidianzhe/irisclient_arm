@@ -131,7 +131,7 @@
        <string>Continuous Recog</string>
       </property>
       <property name="checked">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_Save">
@@ -1657,7 +1657,7 @@ Debug Info</string>
        <string>Auto Start</string>
       </property>
       <property name="checked">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QLabel" name="label_10">
