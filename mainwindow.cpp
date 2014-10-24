@@ -547,8 +547,8 @@ void MainWindow::open() {
 	case CMI_SUCCESS:
 
 		m_curOpenSerialNumber = curStr;
-		ui->label_ModelName->setText(QString(dvInfo->modelName));
-        ui->label_FirmwareRev->setText(QString(dvInfo->firmwareRev));
+        //ui->label_ModelName->setText(QString(dvInfo->modelName));
+        //ui->label_FirmwareRev->setText(QString(dvInfo->firmwareRev));
 
         cmi_getOperatingRangeCenter(m_cmiHandle, &m_operatingRangeCenter);
         cmi_getInOutDepthOfField(m_cmiHandle, &m_inDepthOfField, &m_outDepthOfField);
@@ -1120,10 +1120,14 @@ void MainWindow::doEnroll(CMI_IMAGE_INFO *imageInfo) {
     DialogName dialogname;
     QString name;
     bool ok;
-
+#if defined(DEMOTOOLBOX)
+    ok = true;
+    name = "u" + QString::number( m_database.recordListSize());
+#else
     if (ok = dialogname.exec()) {
         name = dialogname.name();
     }
+#endif
 
     if (ok && !name.isEmpty()) {
         DBRecord record;
@@ -1964,6 +1968,10 @@ void MainWindow::doSwitchChanged(int eventID) {
     }
     else if (eventID == CMI_EVENT_MODE_KEY_RELEASED) {
         ui->label_ActionEvent->setText("Mode Key Released");
+        //<lhj add>
+#if defined(DEMOTOOLBOX)
+
+#endif
     }
 
     else if (eventID == CMI_EVENT_FUNC_KEY_1_PRESSED) {
@@ -1971,13 +1979,22 @@ void MainWindow::doSwitchChanged(int eventID) {
     }
     else if (eventID == CMI_EVENT_FUNC_KEY_1_RELEASED) {
         ui->label_ActionEvent->setText("Key 1 Released");
+        //<lhj add>
+#if defined(DEMOTOOLBOX)
+        enroll();
+#endif
     }
     else if (eventID == CMI_EVENT_FUNC_KEY_2_PRESSED) {
         ui->label_ActionEvent->setText("Key 2 Pressed");
     }
     else if (eventID == CMI_EVENT_FUNC_KEY_2_RELEASED) {
         ui->label_ActionEvent->setText("Key 2 Released");
+        //<lhj add>
+    #if defined(DEMOTOOLBOX)
+        recog();
+    #endif
     }
+
     else if (eventID == CMI_EVENT_FUNC_KEY_3_PRESSED) {
         ui->label_ActionEvent->setText("Key 3 Pressed");
     }

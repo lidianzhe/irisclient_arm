@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Wed Oct 22 10:30:54 2014
+** Created: Sat Oct 25 01:41:00 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -1513,7 +1513,7 @@ public:
         label_10->setText(QApplication::translate("MainWindow", "Buttons Event:", 0, QApplication::UnicodeUTF8));
         label_ActionEvent->setText(QString());
         label_8->setText(QApplication::translate("MainWindow", "HD:", 0, QApplication::UnicodeUTF8));
-        label_11->setText(QApplication::translate("MainWindow", "EMA Event Type:", 0, QApplication::UnicodeUTF8));
+        label_11->setText(QApplication::translate("MainWindow", "Event Type:", 0, QApplication::UnicodeUTF8));
         label_EMAEvent->setText(QString());
         label_15->setText(QApplication::translate("MainWindow", "D:", 0, QApplication::UnicodeUTF8));
         label_RightEyeDistance->setText(QString());
@@ -1522,7 +1522,7 @@ public:
         label_17->setText(QApplication::translate("MainWindow", "Firmware:", 0, QApplication::UnicodeUTF8));
         label_FirmwareRev->setText(QString());
         label_MirlinLevel->setText(QString());
-        label_24->setText(QApplication::translate("MainWindow", "Mirlin:", 0, QApplication::UnicodeUTF8));
+        label_24->setText(QApplication::translate("MainWindow", "License:", 0, QApplication::UnicodeUTF8));
         label_IndColor->setText(QString());
         label_33->setText(QApplication::translate("MainWindow", "Indicator:", 0, QApplication::UnicodeUTF8));
         tabWidget->setTabText(tabWidget->indexOf(tab), QApplication::translate("MainWindow", "     Main     ", 0, QApplication::UnicodeUTF8));

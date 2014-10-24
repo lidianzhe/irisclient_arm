@@ -1886,7 +1886,7 @@ Debug Info</string>
        </font>
       </property>
       <property name="text">
-       <string>EMA Event Type:</string>
+       <string>Event Type:</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_EMAEvent">
@@ -2401,7 +2401,7 @@ Debug Info</string>
        </font>
       </property>
       <property name="text">
-       <string>Mirlin:</string>
+       <string>License:</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_IndColor">

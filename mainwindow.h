@@ -125,6 +125,9 @@ private:
 #if defined(_EMALIB)
     EMA_HANDLE m_emaHandle;
 #endif
+#if defined(DEMOTOOLBOX)
+    int m_increment;
+#endif
 	CMI_IMAGE_INFO *m_imageInfo;
 	bool m_isStart;
 	bool m_isEnroll;

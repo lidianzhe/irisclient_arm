@@ -71,6 +71,8 @@ linux-g++ {
     LINUX_LIB_DIR = /usr/local/lib
     LINUX_INCLUDE_DIR = /usr/local/include
     DEFINES += _EMALIB
+    #Demo support
+    DEFINES += DEMOTOOLBOX
     SOURCES += emaeventthread.cpp
     HEADERS += emaeventthread.h
 
