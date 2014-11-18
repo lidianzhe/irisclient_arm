@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Sat Oct 25 01:41:29 2014
+** Created: Fri Nov 14 11:11:10 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      28,   14, // methods
+      29,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -59,6 +59,7 @@ static const uint qt_meta_data_MainWindow[] = {
      631,  587,   18,   18, 0x08,
      669,   77,   18,   18, 0x08,
      704,  778,   18,   18, 0x08,
+     825,  843,   18,   18, 0x08,
 
        0        // eod
 };
@@ -86,6 +87,7 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "displaySelectedImages(CMI_IMAGE_INFO*,unsigned char*,unsigned char*,bo"
     "ol)\0"
     "imageInfo,lfinalImage,rfinalImage,showBoundary\0"
+    "sendToServer(int)\0personId\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -124,6 +126,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 25: _t->setDistanceUnselectedRect((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2]))); break;
         case 26: _t->displayLiveImages((*reinterpret_cast< CMI_IMAGE_INFO*(*)>(_a[1]))); break;
         case 27: _t->displaySelectedImages((*reinterpret_cast< CMI_IMAGE_INFO*(*)>(_a[1])),(*reinterpret_cast< unsigned char*(*)>(_a[2])),(*reinterpret_cast< unsigned char*(*)>(_a[3])),(*reinterpret_cast< bool(*)>(_a[4]))); break;
+        case 28: _t->sendToServer((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -161,9 +164,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 28)
+        if (_id < 29)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 28;
+        _id -= 29;
     }
     return _id;
 }

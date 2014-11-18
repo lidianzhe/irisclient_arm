@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql network
 
 TARGET = IrisClient
 TEMPLATE = app
@@ -63,7 +63,7 @@ win32 {
         LIBS += $${WIN_LIB_DIR}/cmicolorLib.lib
         irisclient.files = ./release/$${TARGET}.exe
         irisclient.path = ../bin
-        INSTALLS += IrisClient
+        INSTALLS += irisclient
     }
 }
 
@@ -72,7 +72,10 @@ linux-g++ {
     LINUX_INCLUDE_DIR = /usr/local/include
     DEFINES += _EMALIB
     #Demo support
-    DEFINES += DEMOTOOLBOX
+    #DEFINES += DEMOTOOLBOX
+    #socket support by lhj
+    DEFINES += _SENDTOSERVER
+
     SOURCES += emaeventthread.cpp
     HEADERS += emaeventthread.h
 
@@ -116,5 +119,5 @@ linux-g++ {
         irisclient.path = /usr/local/bin
         irisclient.extra = strip $${TARGET};
     }
-    INSTALLS += IrisClient
+    INSTALLS += irisclient
 }

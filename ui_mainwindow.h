@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Oct 25 01:41:00 2014
+** Created: Fri Nov 14 12:36:14 2014
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -980,7 +980,7 @@ public:
         spinBox_Interval->setMinimum(1);
         spinBox_Interval->setMaximum(20);
         spinBox_Interval->setSingleStep(1);
-        spinBox_Interval->setValue(3);
+        spinBox_Interval->setValue(1);
         label_28 = new QLabel(groupBox_4);
         label_28->setObjectName(QString::fromUtf8("label_28"));
         label_28->setGeometry(QRect(210, 200, 71, 31));

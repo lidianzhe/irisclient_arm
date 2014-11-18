@@ -11,6 +11,10 @@
 #include <QGraphicsEllipseItem>
 #include <QGraphicsRectItem>
 #include <QMutex>
+//lhj add
+#if defined(_SENDTOSERVER)
+#include <QUdpSocket>
+#endif
 //#include <QAudioOutput>
 #include "cmirislib2.h"
 #if defined(_EMALIB)
@@ -115,6 +119,9 @@ private slots:
 	void displaySelectedImages(CMI_IMAGE_INFO *imageInfo, unsigned char *lfinalImage,
                                unsigned char *rfinalImage, bool showBoundary);
 
+#if defined(_SENDTOSERVER)
+    void sendToServer(int personId);
+#endif
 private:
     Ui::MainWindow *ui;
 
@@ -127,6 +134,11 @@ private:
 #endif
 #if defined(DEMOTOOLBOX)
     int m_increment;
+#endif
+#if defined(_SENDTOSERVER)
+    QUdpSocket *udpClient;
+    QHostAddress m_hostAddress;
+    quint16 m_port;
 #endif
 	CMI_IMAGE_INFO *m_imageInfo;
 	bool m_isStart;

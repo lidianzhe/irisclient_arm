@@ -13,7 +13,8 @@
 #include <QMessageBox>
 #include <QSound>
 #include <QDir>
-
+#include <QUdpSocket>
+#include "qdatetime.h"
 #if defined(__linux__)
 #define Sleep(x) usleep(x*1000)
 #endif
@@ -28,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+#if defined(_SENDTOSERVER)
+    udpClient= new QUdpSocket(this);
+#endif
     this->setWindowTitle("Acezne Iris Client");
 	// Initialize max Movement values
 	m_maxXYMovementEnrollment = 0.4;
@@ -211,9 +215,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_curPath = QDir::currentPath();
 #endif
 
-    qDebug()<<"open and recog";
-    open();
-    recog();
+    //open();
+    //recog();
 }
 
 MainWindow::~MainWindow()
@@ -446,6 +449,7 @@ void MainWindow::enrollFaceImagePath(CMI_IMAGE_INFO *imageInfo, DBRecord *record
 }
 
 void MainWindow::open() {
+
 	ui->statusBar->clearMessage();
 	if (m_imageInfo) {
 		delete m_imageInfo;
@@ -453,7 +457,7 @@ void MainWindow::open() {
     }
 
     int dbret = m_database.open();
-
+            qDebug()<<"test0-------------";
     if (dbret) {
         ui->statusBar->showMessage(QString("Error! Cannot open Enroll.db! Error code = %1").arg(dbret));
 		return;
@@ -496,9 +500,9 @@ void MainWindow::open() {
         return;
     }
 #endif
-
+            qDebug()<<"test1-------------";
     int ret = cmi_openDevice(m_cmiHandle, dvInfo);
-
+            qDebug()<<"test2-------------"<<ret;
 	switch(ret) {
 
     case CMI_ERROR_INVALID_HANDLE:
@@ -545,7 +549,7 @@ void MainWindow::open() {
         break;
 
 	case CMI_SUCCESS:
-
+            qDebug()<<"test3-------------";
 		m_curOpenSerialNumber = curStr;
         //ui->label_ModelName->setText(QString(dvInfo->modelName));
         //ui->label_FirmwareRev->setText(QString(dvInfo->firmwareRev));
@@ -580,8 +584,10 @@ void MainWindow::open() {
         else ui->label_MirlinLevel->setText("");
 
 #if defined(__linux__)
+         qDebug()<<"defined(__linux__) "<<QString("aplay %1/recognized.wav").arg(m_curPath).toStdString().c_str();
         system(QString("aplay %1/recognized.wav").arg(m_curPath).toStdString().c_str());
 #else
+         qDebug()<<"defined(no_linux)   open and recog";
         QSound::play("./recognized.wav");
 #endif
 		break;
@@ -1181,6 +1187,7 @@ void MainWindow::doEnroll(CMI_IMAGE_INFO *imageInfo) {
         }
         else { // success
 #if defined(__linux__)
+
             system(QString("aplay %1/enrollCompleted.wav").arg(m_curPath).toStdString().c_str());
 #else
             QSound::play("./enrollCompleted.wav");
@@ -1193,7 +1200,23 @@ void MainWindow::doEnroll(CMI_IMAGE_INFO *imageInfo) {
         ui->statusBar->showMessage("Fail to Enroll.\nPlease retry!");
 	}
 }
+#if defined(_SENDTOSERVER)
+void MainWindow::sendToServer(int personId){
+            qDebug("send to server");
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_8);
+    m_hostAddress=QHostAddress("192.168.5.190");
+    m_port=1234;
+    quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
+    quint8 flag=1;
+    out<<quint16(0xAAFF)<<quint8(0)<<quint32(personId)<<quint64(dt)<<flag;
+    udpClient->writeDatagram(block,m_hostAddress,m_port);
+    out.device()->close();
 
+}
+
+#endif
 void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 
 	QMessageBox msgBox;
@@ -1336,7 +1359,7 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
         QSound::play("./notRecognized.wav");
 #endif
     }
-    else {
+    else { //success
 #if defined(_EMALIB)
         EMA_EVENT emaEvent;
         emaEvent.cbSize = sizeof(EMA_EVENT);
@@ -1351,6 +1374,14 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 #endif
 
         record = m_database.m_recordList.at(minId);
+
+        //<lhj add comment=send to server>
+#if defined(_SENDTOSERVER)
+        int userNo=record->name().toInt();
+        sendToServer(userNo);
+#endif
+        //</lhj>
+
         ui->label_Name->setText(record->name());
         ui->label_LeftHD->setText(QString("%1").arg(minLeftHD, 0, 'g', 2));
         ui->label_RightHD->setText(QString("%1").arg(minRightHD, 0, 'g', 2));
@@ -1364,6 +1395,7 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 #if defined(__linux__)
         system("aplay /usr/local/share/AizheTech/recognized.wav");
 #else
+        qDebug()<<"defined(__linux__)   open and recog";
         QSound::play("./recognized.wav");
 #endif
 
