@@ -21,14 +21,16 @@ SOURCES += mainwindow.cpp \
     dialogname.cpp \
     eventthread.cpp \
     dmeventthread.cpp \
-    dbrecord.cpp
+    dbrecord.cpp \
+    inoutinfo.cpp
 
 HEADERS  += mainwindow.h \
     cdatabase.h \
     dialogname.h \
     eventthread.h \
     dmeventthread.h \
-    dbrecord.h
+    dbrecord.h \
+    inoutinfo.h
 
 FORMS    += mainwindow.ui \
     dialogname.ui
