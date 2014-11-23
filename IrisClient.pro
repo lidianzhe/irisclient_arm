@@ -22,7 +22,8 @@ SOURCES += mainwindow.cpp \
     eventthread.cpp \
     dmeventthread.cpp \
     dbrecord.cpp \
-    inoutinfo.cpp
+    inoutinfo.cpp \
+    inoutcontroller.cpp
 
 HEADERS  += mainwindow.h \
     cdatabase.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     eventthread.h \
     dmeventthread.h \
     dbrecord.h \
-    inoutinfo.h
+    inoutinfo.h \
+    inoutcontroller.h
 
 FORMS    += mainwindow.ui \
     dialogname.ui

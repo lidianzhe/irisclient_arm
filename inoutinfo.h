@@ -6,6 +6,7 @@ class InoutInfo
 {
 public:
     InoutInfo();
+    InoutInfo(InoutInfo &inout);
     const int pid() {return m_pid;}
     const QString &deviceNo() {return m_deviceNo;}
     const int personId() {return m_personId;}

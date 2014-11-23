@@ -4,7 +4,9 @@
 #include "dbrecord.h"
 #include <QtSql/QSqlDatabase>
 #include <QList>
-
+#ifdef(_SENDTOSERVER)
+#include "inoutinfo.h"
+#endif
 class QSqlTableModel;
 
 class CDataBase
@@ -18,10 +20,16 @@ public:
 	bool insert(DBRecord &record);
 	int recordListSize() {return m_recordList.size();}
 
-	QList<DBRecord *> m_recordList;
 
+	QList<DBRecord *> m_recordList;
+#ifdef (_SENDTOSERVER)
+    //
+    QSqlDatabase db() {return m_db;}
+    bool addInout(InoutInfo &inout);
+    QList<InoutInfo *> m_inoutList;
+#endif
 private:
-	QSqlDatabase m_db;
+    QSqlDatabase m_db;
 	QSqlTableModel *m_sqlModel;
 	int m_maxID;
 };
