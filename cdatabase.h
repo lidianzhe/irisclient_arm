@@ -4,7 +4,7 @@
 #include "dbrecord.h"
 #include <QtSql/QSqlDatabase>
 #include <QList>
-#ifdef(_SENDTOSERVER)
+#if defined(_SENDTOSERVER)
 #include "inoutinfo.h"
 #endif
 class QSqlTableModel;
@@ -22,7 +22,7 @@ public:
 
 
 	QList<DBRecord *> m_recordList;
-#ifdef (_SENDTOSERVER)
+#if defined(_SENDTOSERVER)
     //
     QSqlDatabase db() {return m_db;}
     bool addInout(InoutInfo &inout);

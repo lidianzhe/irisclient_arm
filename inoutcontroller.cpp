@@ -1,7 +1,14 @@
 #include "inoutcontroller.h"
 #include "inoutinfo.h"
-#include <QSqlQuery>
+
 #include <QSqlDatabase>
+
+//#include <QCoreApplication>
+#include <QtDebug>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QStringList>
+
 InoutController::InoutController()
 {
 
@@ -13,22 +20,22 @@ InoutController::InoutController(QSqlDatabase &db)
 
 bool InoutController::addInout(InoutInfo &inout)
 {
-    QSqlQuery cmd(m_db);
-    cmd.prepare("insert into InoutDetails("
+
+    QSqlQuery query(m_db);
+    query.prepare("insert into InoutDetails("
                   "DeviceNo,CardTime,Flag,SeriesId,if_UserNo) values ("
                   ":DeviceNo,:CardTime,:Flag,:SeriesId,:if_UserNo)"
                   );
-    cmd.bindValue(":DeviceNo",QVariant(inout.deviceNo()));
-    cmd.bindValue(":CardTime",QVariant(inout.cardTime()));
-    cmd.bindValue(":Flag",QVariant(inout.flag()));
-    cmd.bindValue(":SeriesId",QVariant(inout.seriesId()));
-    cmd.bindValue(":if_UserNo",QVariant(inout.if_UserNo()));
-    if(cmd.exec()){
+    query.bindValue(":DeviceNo",QVariant(inout.deviceNo()));
+    query.bindValue(":CardTime",QVariant(inout.cardTime()));
+    query.bindValue(":Flag",QVariant(inout.flag()));
+    query.bindValue(":SeriesId",QVariant(inout.seriesId()));
+    query.bindValue(":if_UserNo",QVariant(inout.if_UserNo()));
+    if(query.exec()){
         InoutInfo *newInout = new InoutInfo(inout);
         m_inoutList << newInout;
     }else{
-        qDebug()<<cmd.lastError();
+        qDebug()<<query.lastError();
         return false;
     }
-
 }

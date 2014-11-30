@@ -2,6 +2,7 @@
 #define INOUTCONTROLLER_H
 #include <QSqlDatabase>
 #include <QList>
+#include "inoutinfo.h"
 class InoutController
 {
 public:
@@ -10,6 +11,7 @@ public:
 
     bool addInout(InoutInfo &inout);
     QList<InoutInfo *> m_inoutList;
+    void setDatabase(QSqlDatabase &db){m_db=db;}
 private:
     QSqlDatabase m_db;
 };
