@@ -15,6 +15,7 @@
 #include <QDir>
 #include <QUdpSocket>
 #include "qdatetime.h"
+#include <QByteArray>
 #if defined(__linux__)
 #define Sleep(x) usleep(x*1000)
 #endif
@@ -2610,15 +2611,22 @@ int MainWindow::saveToLocal(int personId)
      m_inout.addInout(ioInfo);
 }
 void MainWindow::sendToServer(int personId){
-            qDebug("send to server");
+    qDebug("send to server");
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
-    m_hostAddress=QHostAddress("192.168.5.190");
+    m_hostAddress=QHostAddress("192.168.0.83");
     m_port=1234;
     quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
     quint8 flag=1;
-    out<<quint16(0xAAFF)<<quint8(0)<<quint32(personId)<<quint64(dt)<<flag;
+    //QByteArray sn;
+    //sn=m_deviceSN.toAscii();
+    //out<<sn;
+    QString ds=QDateTime::currentDateTime().toString("yyyyMMdd:hhmm");
+    out<<quint16(0xAAFF)<<quint8(0x01)<<quint8(0)<<quint32(17)<<m_deviceSN.toAscii()
+      <<quint32(personId)<<quint64(dt)<<flag<<ds.toAscii();
+    out.device()->seek(3);
+    out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
     udpClient->writeDatagram(block,m_hostAddress,m_port);
     out.device()->close();
 
