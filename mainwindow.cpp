@@ -1365,6 +1365,7 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
         int userNo=record->name().toInt();
         saveToLocal(userNo);
         sendToServer(userNo);
+        sendToServer2(record);
 #endif
         //</lhj>
 
@@ -2619,17 +2620,30 @@ void MainWindow::sendToServer(int personId){
     m_port=1234;
     quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
     quint8 flag=1;
-    //QByteArray sn;
-    //sn=m_deviceSN.toAscii();
-    //out<<sn;
-    QString ds=QDateTime::currentDateTime().toString("yyyyMMdd:hhmm");
     out<<quint16(0xAAFF)<<quint8(0x01)<<quint8(0)<<quint32(17)<<m_deviceSN.toAscii()
-      <<quint32(personId)<<quint64(dt)<<flag<<ds.toAscii();
+      <<quint32(personId)<<quint64(dt)<<flag;
     out.device()->seek(3);
     out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
     udpClient->writeDatagram(block,m_hostAddress,m_port);
     out.device()->close();
 
+}
+
+void MainWindow::sendToServer2(DBRecord *record)
+{
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_8);
+    m_hostAddress=QHostAddress("192.168.0.83");
+    m_port=1234;
+    unsigned char *l = new unsigned char [CMI_MIR_ENROL_TEMPLATE_SIZE];
+    l=(unsigned char *)record->leftIrisTemplate().data();
+    QByteArray ba=record->leftIrisTemplate();
+    out<<quint16(0xCCFF)<<quint8(0x02)<<quint8(0)<<quint32(1)<<quint32(1216)<<ba;
+    out.device()->seek(3);
+    out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
+    udpClient->writeDatagram(block,m_hostAddress,m_port);
+    out.device()->close();
 }
 
 #endif
