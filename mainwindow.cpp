@@ -15,6 +15,7 @@
 #include <QDir>
 #include <QUdpSocket>
 #include "qdatetime.h"
+#include <QByteArray>
 #if defined(__linux__)
 #define Sleep(x) usleep(x*1000)
 #endif
@@ -1200,23 +1201,7 @@ void MainWindow::doEnroll(CMI_IMAGE_INFO *imageInfo) {
         ui->statusBar->showMessage("Fail to Enroll.\nPlease retry!");
 	}
 }
-#if defined(_SENDTOSERVER)
-void MainWindow::sendToServer(int personId){
-            qDebug("send to server");
-    QByteArray block;
-    QDataStream out(&block,QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_8);
-    m_hostAddress=QHostAddress("192.168.5.190");
-    m_port=1234;
-    quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
-    quint8 flag=1;
-    out<<quint16(0xAAFF)<<quint8(0)<<quint32(personId)<<quint64(dt)<<flag;
-    udpClient->writeDatagram(block,m_hostAddress,m_port);
-    out.device()->close();
 
-}
-
-#endif
 void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 
 	QMessageBox msgBox;
@@ -1378,6 +1363,7 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
         //<lhj add comment=send to server>
 #if defined(_SENDTOSERVER)
         int userNo=record->name().toInt();
+        saveToLocal(userNo);
         sendToServer(userNo);
 #endif
         //</lhj>
@@ -1917,6 +1903,7 @@ void MainWindow::doDeviceArrived(CMI_DEVICE_INFO *deviceInfo) {
     QMutexLocker locker(&m_dmMutex);
 
 	QString arrivedSN(deviceInfo->serialNumber);
+    m_deviceSN=arrivedSN;
 	int i;
 
 	int curIndex = ui->comboBox_SerialNumbers->currentIndex();
@@ -2607,7 +2594,42 @@ void MainWindow::displaySelectedImages(CMI_IMAGE_INFO *imageInfo, unsigned char 
 	}
 	else {
 		ui->statusBar->showMessage(QString("Capture stopped"));
-	}
+    }
 
 }
 
+
+#if defined(_SENDTOSERVER)
+int MainWindow::saveToLocal(int personId)
+{
+
+    InoutInfo ioInfo;
+    QSqlDatabase db=m_database.db();
+    m_inout.setDatabase(db);
+     ioInfo.setif_UserNo(personId);
+     ioInfo.setCardTime(QDateTime::currentDateTime());
+     m_inout.addInout(ioInfo);
+}
+void MainWindow::sendToServer(int personId){
+    qDebug("send to server");
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_8);
+    m_hostAddress=QHostAddress("192.168.0.83");
+    m_port=1234;
+    quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
+    quint8 flag=1;
+    //QByteArray sn;
+    //sn=m_deviceSN.toAscii();
+    //out<<sn;
+    QString ds=QDateTime::currentDateTime().toString("yyyyMMdd:hhmm");
+    out<<quint16(0xAAFF)<<quint8(0x01)<<quint8(0)<<quint32(17)<<m_deviceSN.toAscii()
+      <<quint32(personId)<<quint64(dt)<<flag<<ds.toAscii();
+    out.device()->seek(3);
+    out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
+    udpClient->writeDatagram(block,m_hostAddress,m_port);
+    out.device()->close();
+
+}
+
+#endif

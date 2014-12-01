@@ -14,6 +14,8 @@
 //lhj add
 #if defined(_SENDTOSERVER)
 #include <QUdpSocket>
+#include "inoutinfo.h"
+#include "inoutcontroller.h"
 #endif
 //#include <QAudioOutput>
 #include "cmirislib2.h"
@@ -120,6 +122,7 @@ private slots:
                                unsigned char *rfinalImage, bool showBoundary);
 
 #if defined(_SENDTOSERVER)
+    int saveToLocal(int personId);
     void sendToServer(int personId);
 #endif
 private:
@@ -139,6 +142,8 @@ private:
     QUdpSocket *udpClient;
     QHostAddress m_hostAddress;
     quint16 m_port;
+    QString m_deviceSN;
+    InoutController m_inout;
 #endif
 	CMI_IMAGE_INFO *m_imageInfo;
 	bool m_isStart;
