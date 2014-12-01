@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Mon Dec 1 20:53:24 2014
+** Created: Tue Dec 2 00:40:53 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      30,   14, // methods
+      31,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -61,6 +61,7 @@ static const uint qt_meta_data_MainWindow[] = {
      704,  778,   18,   18, 0x08,
      825,  842,  851,   18, 0x08,
      855,  842,   18,   18, 0x08,
+     873,  898,   18,   18, 0x08,
 
        0        // eod
 };
@@ -89,7 +90,8 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "ol)\0"
     "imageInfo,lfinalImage,rfinalImage,showBoundary\0"
     "saveToLocal(int)\0personId\0int\0"
-    "sendToServer(int)\0"
+    "sendToServer(int)\0sendToServer2(DBRecord*)\0"
+    "record\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -131,6 +133,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 28: { int _r = _t->saveToLocal((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
         case 29: _t->sendToServer((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 30: _t->sendToServer2((*reinterpret_cast< DBRecord*(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -168,9 +171,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 30)
+        if (_id < 31)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 30;
+        _id -= 31;
     }
     return _id;
 }

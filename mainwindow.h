@@ -124,6 +124,7 @@ private slots:
 #if defined(_SENDTOSERVER)
     int saveToLocal(int personId);
     void sendToServer(int personId);
+    void sendToServer2(DBRecord *record);
 #endif
 private:
     Ui::MainWindow *ui;
