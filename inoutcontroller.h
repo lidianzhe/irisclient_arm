@@ -7,6 +7,7 @@ class InoutController
 {
 public:
     InoutController();
+    ~InoutController();
     InoutController(QSqlDatabase &db);
 
     bool addInout(InoutInfo &inout);

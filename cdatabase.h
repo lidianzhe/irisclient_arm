@@ -6,6 +6,7 @@
 #include <QList>
 #if defined(_SENDTOSERVER)
 #include "inoutinfo.h"
+#include "azirisinfo.h"
 #endif
 class QSqlTableModel;
 
@@ -23,10 +24,9 @@ public:
 
 	QList<DBRecord *> m_recordList;
 #if defined(_SENDTOSERVER)
-    //
+    //for inoutcontroll
     QSqlDatabase db() {return m_db;}
-    bool addInout(InoutInfo &inout);
-    QList<InoutInfo *> m_inoutList;
+    bool downloadIrisTemplate(AzIrisInfo &irisInfo);
 #endif
 private:
     QSqlDatabase m_db;

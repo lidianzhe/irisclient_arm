@@ -23,7 +23,10 @@ SOURCES += mainwindow.cpp \
     dmeventthread.cpp \
     dbrecord.cpp \
     inoutinfo.cpp \
-    inoutcontroller.cpp
+    inoutcontroller.cpp \
+    udpserverthread.cpp \
+    azirisinfo.cpp \
+    configsettings.cpp
 
 HEADERS  += mainwindow.h \
     cdatabase.h \
@@ -32,7 +35,10 @@ HEADERS  += mainwindow.h \
     dmeventthread.h \
     dbrecord.h \
     inoutinfo.h \
-    inoutcontroller.h
+    inoutcontroller.h \
+    udpserverthread.h \
+    azirisinfo.h \
+    configsettings.h
 
 FORMS    += mainwindow.ui \
     dialogname.ui

@@ -13,6 +13,16 @@ InoutController::InoutController()
 {
 
 }
+
+InoutController::~InoutController()
+{
+    if (m_inoutList.size() != 0) {
+        for (int i = 0; i < m_inoutList.size(); i++) {
+            delete m_inoutList.at(i);
+        }
+        m_inoutList.clear();
+    }
+}
 InoutController::InoutController(QSqlDatabase &db)
 {
     m_db = db;
@@ -32,8 +42,8 @@ bool InoutController::addInout(InoutInfo &inout)
     query.bindValue(":SeriesId",QVariant(inout.seriesId()));
     query.bindValue(":if_UserNo",QVariant(inout.if_UserNo()));
     if(query.exec()){
-        InoutInfo *newInout = new InoutInfo(inout);
-        m_inoutList << newInout;
+        //InoutInfo *newInout = new InoutInfo(inout);
+        //m_inoutList << newInout;
     }else{
         qDebug()<<query.lastError();
         return false;

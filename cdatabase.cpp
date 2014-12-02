@@ -49,7 +49,8 @@ int CDataBase::open() {
                                 "FaceFeatureTemplate VARCHAR(5120), "
                                 "LeftIrisPath TEXT, "
                                 "RightIrisPath TEXT, "
-                                "FaceImagePath TEXT)");
+                                "FaceImagePath TEXT,"
+                                "if_UserNo integer)");
                 if (!query.exec()) return false;
 
                 query.setForwardOnly(true);
@@ -82,6 +83,8 @@ int CDataBase::open() {
             record->setRightIrisPath(qstr);
             qstr = query.value(7).toString();
             record->setFaceImagePath(qstr);
+            record->setif_UserNo(query.value(8).toInt());
+
 
 			qDebug() << "Loaded Template Size left right" << record->leftIrisTemplate().size() <<
 						record->rightIrisTemplate().size();
@@ -121,8 +124,8 @@ bool CDataBase::insert(DBRecord &record) {
 
 	QSqlQuery query(m_db);
 
-    query.prepare("INSERT INTO EnrollTable (Id, Name, LeftIrisTemplate, RightIrisTemplate, FaceFeatureTemplate, LeftIrisPath, RightIrisPath, FaceImagePath)"
-                      "VALUES (:ID, :NAME, :LEFT_IRIS_TEMPLATE, :RIGHT_IRIS_TEMPLATE, :FACE_FEATURE_TEMPLATE, :LEFT_IRIS_PATH, :RIGHT_IRIS_PATH, :FACE_IMAGE_PATH)");
+    query.prepare("INSERT INTO EnrollTable (Id, Name, LeftIrisTemplate, RightIrisTemplate, FaceFeatureTemplate, LeftIrisPath, RightIrisPath, FaceImagePath,if_UserNo)"
+                      "VALUES (:ID, :NAME, :LEFT_IRIS_TEMPLATE, :RIGHT_IRIS_TEMPLATE, :FACE_FEATURE_TEMPLATE, :LEFT_IRIS_PATH, :RIGHT_IRIS_PATH, :FACE_IMAGE_PATH,:if_UserNo)");
 	query.bindValue(":ID", QVariant(record.id()));
 	query.bindValue(":NAME", QVariant(record.name()));
 	query.bindValue(":LEFT_IRIS_TEMPLATE", QVariant(record.leftIrisTemplate()));
@@ -131,7 +134,7 @@ bool CDataBase::insert(DBRecord &record) {
     query.bindValue(":LEFT_IRIS_PATH", QVariant(record.leftIrisPath()));
     query.bindValue(":RIGHT_IRIS_PATH", QVariant(record.rightIrisPath()));
     query.bindValue(":FACE_IMAGE_PATH", QVariant(record.faceImagePath()));
-
+    query.bindValue(":if_UserNo",QVariant(record.name()));
 	if (query.exec()) {
 		DBRecord *newRecord = new DBRecord(record);
 		m_recordList << newRecord;
@@ -140,7 +143,64 @@ bool CDataBase::insert(DBRecord &record) {
 	else {
 		qDebug() << query.lastError();
 		return false;
-	}
+    }
+}
+
+bool CDataBase::downloadIrisTemplate(AzIrisInfo &irisInfo)
+{
+    QSqlQuery query("select * from enrolltable where name="+QString::number(irisInfo.if_UserNo));
+    if(query.next())
+    {
+        query.prepare("update enrolltable set Id=?, LeftIrisTemplate=?,"
+                      "RightIrisTemplate=? where if_userno="+
+                      QString::number(irisInfo.if_UserNo));
+        query.addBindValue(QVariant(irisInfo.personId));
+        query.addBindValue(QVariant(irisInfo.leftIrisTemplate));
+        query.addBindValue(QVariant(irisInfo.rightIrisTemplate));
+        if(query.exec()){
+            for(int i=0;i<m_recordList.size();i++){
+                if(m_recordList.at(i)->if_UserNo()==irisInfo.if_UserNo){
+                    m_recordList.at(i)->setLeftIrisTemplate(irisInfo.leftIrisTemplate);
+                    m_recordList.at(i)->setRightIrisTemplate(irisInfo.rightIrisTemplate);
+                    m_recordList.at(i)->setId(irisInfo.personId);
+                }
+            }
+            return true;
+        }else{
+            qDebug()<<"update error"<<query.lastError();
+            return false;
+        }
+    }
+    else{
+        query.prepare("INSERT INTO EnrollTable (Id, Name, LeftIrisTemplate, RightIrisTemplate, FaceFeatureTemplate, LeftIrisPath, RightIrisPath, FaceImagePath,if_UserNo)"
+                      "values(?,?,?,?,?,?,?,?,?)");
+        query.addBindValue(QVariant(irisInfo.personId));
+        query.addBindValue(QVariant(irisInfo.if_UserNo));
+        query.addBindValue(QVariant(irisInfo.leftIrisTemplate));
+        query.addBindValue(QVariant(irisInfo.rightIrisTemplate));
+
+        query.addBindValue(QVariant(NULL));
+        query.addBindValue(QVariant(NULL));
+        query.addBindValue(QVariant(NULL));
+        query.addBindValue(QVariant(NULL));
+
+        query.addBindValue(QVariant(irisInfo.if_UserNo));
+        if(query.exec()){
+            DBRecord *newRecord = new DBRecord();
+            newRecord->setId(irisInfo.personId);
+            QString name=QString::number(irisInfo.if_UserNo);
+            newRecord->setName(name);
+            newRecord->setif_UserNo(irisInfo.if_UserNo);
+            newRecord->setLeftIrisTemplate(irisInfo.leftIrisTemplate);
+            newRecord->setRightIrisTemplate(irisInfo.rightIrisTemplate);
+            m_recordList << newRecord;
+            return true;
+        }else{
+            qDebug()<<"insert error"<<query.lastError();
+            return false;
+        }
+    }
+
 }
 
 
