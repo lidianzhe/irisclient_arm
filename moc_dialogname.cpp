@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'dialogname.h'
 **
-** Created: Tue Dec 2 18:42:21 2014
+** Created: Wed Dec 3 00:43:22 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!

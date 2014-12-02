@@ -1,5 +1,6 @@
 #include "udpserverthread.h"
 #include <QByteArray>
+#include <QDebug>
 UdpServerThread::UdpServerThread(QObject *parent) :
     QThread(parent)
 {
