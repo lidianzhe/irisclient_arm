@@ -37,6 +37,8 @@ class DMEventThread;
 class EmaEventThread;
 class QextSerialPort;
 
+class UdpServerThread;
+
 namespace Ui {
     class MainWindow;
 }
@@ -145,6 +147,8 @@ private:
     quint16 m_port;
     QString m_deviceSN;
     InoutController m_inout;
+
+    UdpServerThread *m_udpServerThread;
 #endif
 	CMI_IMAGE_INFO *m_imageInfo;
 	bool m_isStart;

@@ -16,6 +16,8 @@
 #include <QUdpSocket>
 #include "qdatetime.h"
 #include <QByteArray>
+#include "udpserverthread.h"
+
 #if defined(__linux__)
 #define Sleep(x) usleep(x*1000)
 #endif
@@ -32,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 #if defined(_SENDTOSERVER)
     udpClient= new QUdpSocket(this);
+    m_udpServerThread = new UdpServerThread();
+    m_udpServerThread->start();
 #endif
     this->setWindowTitle("Acezne Iris Client");
 	// Initialize max Movement values
@@ -2639,9 +2643,9 @@ void MainWindow::sendToServer2(DBRecord *record)
     unsigned char *l = new unsigned char [CMI_MIR_ENROL_TEMPLATE_SIZE];
     l=(unsigned char *)record->leftIrisTemplate().data();
     QByteArray ba=record->leftIrisTemplate();
-    out<<quint16(0xCCFF)<<quint8(0x02)<<quint8(0)<<quint32(1)<<quint32(1216)<<ba;
+    out<<quint16(0xCCFF)<<quint8(0x02)<<quint16(0)<<quint32(1)<<quint32(1216)<<ba;
     out.device()->seek(3);
-    out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
+    out<<quint16(block.size()-sizeof(quint16)-sizeof(quint8)*2);
     udpClient->writeDatagram(block,m_hostAddress,m_port);
     out.device()->close();
 }
