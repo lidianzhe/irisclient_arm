@@ -28,9 +28,9 @@ void UdpServerThread::processPendingDatarams()
     AzIrisInfo irisInfo;
     quint16 cmdHead;
 
-    leftIrisTemplate.resize(579);
+
     in>>cmdHead>>irisInfo.command>>irisInfo.dataSize;
-    in>>irisInfo.pid>>irisInfo.PersonId>>irisInfo.leftIrisTemplate;
+    in>>irisInfo.pid>>irisInfo.PersonId>>irisInfo.leftIrisTemplate>>irisInfo.rightIrisTemplate;
     irisInfo.commandHead = QString::number(cmdHead,16).toUpper();
 
     qDebug()<<irisInfo.commandHead<<QString::number(irisInfo.command,16);

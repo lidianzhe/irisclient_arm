@@ -2642,8 +2642,9 @@ void MainWindow::sendToServer2(DBRecord *record)
     m_port=1234;
     unsigned char *l = new unsigned char [CMI_MIR_ENROL_TEMPLATE_SIZE];
     l=(unsigned char *)record->leftIrisTemplate().data();
-    QByteArray ba=record->leftIrisTemplate();
-    out<<quint16(0xCCFF)<<quint8(0x02)<<quint16(0)<<quint32(1)<<quint32(1216)<<ba;
+    QByteArray left=record->leftIrisTemplate();
+    QByteArray right = record->rightIrisTemplate();
+    out<<quint16(0xCCFF)<<quint8(0x02)<<quint16(0)<<quint32(1)<<quint32(1216)<<left<<right;
     out.device()->seek(3);
     out<<quint16(block.size()-sizeof(quint16)-sizeof(quint8)*2);
     udpClient->writeDatagram(block,m_hostAddress,m_port);
