@@ -25,7 +25,8 @@ SOURCES += mainwindow.cpp \
     inoutinfo.cpp \
     inoutcontroller.cpp \
     udpserverthread.cpp \
-    azirisinfo.cpp
+    azirisinfo.cpp \
+    configsettings.cpp
 
 HEADERS  += mainwindow.h \
     cdatabase.h \
@@ -36,7 +37,8 @@ HEADERS  += mainwindow.h \
     inoutinfo.h \
     inoutcontroller.h \
     udpserverthread.h \
-    azirisinfo.h
+    azirisinfo.h \
+    configsettings.h
 
 FORMS    += mainwindow.ui \
     dialogname.ui

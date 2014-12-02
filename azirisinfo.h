@@ -13,7 +13,7 @@ public:
     qint32 pid;
 
     QString deviceSN;
-    qint32 PersonId;
+    qint32 personId;
     QByteArray leftIrisTemplate;
     QByteArray rightIrisTemplate;
 

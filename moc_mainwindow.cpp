@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Tue Dec 2 10:20:28 2014
+** Created: Wed Dec 3 00:11:48 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      31,   14, // methods
+      32,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -62,6 +62,7 @@ static const uint qt_meta_data_MainWindow[] = {
      825,  842,  851,   18, 0x08,
      855,  842,   18,   18, 0x08,
      873,  898,   18,   18, 0x08,
+     905,  937,   18,   18, 0x08,
 
        0        // eod
 };
@@ -91,7 +92,8 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "imageInfo,lfinalImage,rfinalImage,showBoundary\0"
     "saveToLocal(int)\0personId\0int\0"
     "sendToServer(int)\0sendToServer2(DBRecord*)\0"
-    "record\0"
+    "record\0doReadingDatagrams(AzIrisInfo&)\0"
+    "irisInfo\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -134,6 +136,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
         case 29: _t->sendToServer((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 30: _t->sendToServer2((*reinterpret_cast< DBRecord*(*)>(_a[1]))); break;
+        case 31: _t->doReadingDatagrams((*reinterpret_cast< AzIrisInfo(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -171,9 +174,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 31)
+        if (_id < 32)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 31;
+        _id -= 32;
     }
     return _id;
 }

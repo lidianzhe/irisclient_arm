@@ -35,7 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
 #if defined(_SENDTOSERVER)
     udpClient= new QUdpSocket(this);
     m_udpServerThread = new UdpServerThread();
-    m_udpServerThread->start();
+    if(m_udpServerThread){
+        connect(m_udpServerThread,SIGNAL(readingDatagrams(AzIrisInfo&)),this,SLOT(doReadingDatagrams(AzIrisInfo&)));
+        m_udpServerThread->start();
+    }
 #endif
     this->setWindowTitle("Acezne Iris Client");
 	// Initialize max Movement values
@@ -263,7 +266,17 @@ MainWindow::~MainWindow()
     ema_close(m_emaHandle);
     ema_destroyEMA(m_emaHandle);
 #endif
+#if defined(_SENDTOSERVER)
+    if(m_udpServerThread && m_udpServerThread->isRunning()){
+        m_udpServerThread->abort();
+        m_udpServerThread->wait();
+    }
+    if(m_udpServerThread) delete m_udpServerThread;
 
+    udpClient->close();
+    delete udpClient;
+
+#endif
 	if (m_applBuffer) {
 		delete [] m_applBuffer;
 		m_applBuffer = NULL;
@@ -462,11 +475,13 @@ void MainWindow::open() {
     }
 
     int dbret = m_database.open();
-            qDebug()<<"test0-------------";
     if (dbret) {
         ui->statusBar->showMessage(QString("Error! Cannot open Enroll.db! Error code = %1").arg(dbret));
 		return;
     }
+
+    //lhj add
+    m_config.readConfig();
 
 	int curIndex =  ui->comboBox_SerialNumbers->currentIndex();
 	if (curIndex < 0) {
@@ -505,9 +520,7 @@ void MainWindow::open() {
         return;
     }
 #endif
-            qDebug()<<"test1-------------";
     int ret = cmi_openDevice(m_cmiHandle, dvInfo);
-            qDebug()<<"test2-------------"<<ret;
 	switch(ret) {
 
     case CMI_ERROR_INVALID_HANDLE:
@@ -554,7 +567,6 @@ void MainWindow::open() {
         break;
 
 	case CMI_SUCCESS:
-            qDebug()<<"test3-------------";
 		m_curOpenSerialNumber = curStr;
         //ui->label_ModelName->setText(QString(dvInfo->modelName));
         //ui->label_FirmwareRev->setText(QString(dvInfo->firmwareRev));
@@ -590,7 +602,7 @@ void MainWindow::open() {
 
 #if defined(__linux__)
          qDebug()<<"defined(__linux__) "<<QString("aplay %1/recognized.wav").arg(m_curPath).toStdString().c_str();
-        system(QString("aplay %1/recognized.wav").arg(m_curPath).toStdString().c_str());
+//        system(QString("aplay %1/recognized.wav").arg(m_curPath).toStdString().c_str());
 #else
          qDebug()<<"defined(no_linux)   open and recog";
         QSound::play("./recognized.wav");
@@ -1369,7 +1381,7 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
         int userNo=record->name().toInt();
         saveToLocal(userNo);
         sendToServer(userNo);
-        sendToServer2(record);
+        //sendToServer2(record);
 #endif
         //</lhj>
 
@@ -2607,25 +2619,25 @@ void MainWindow::displaySelectedImages(CMI_IMAGE_INFO *imageInfo, unsigned char 
 #if defined(_SENDTOSERVER)
 int MainWindow::saveToLocal(int personId)
 {
-
     InoutInfo ioInfo;
     QSqlDatabase db=m_database.db();
     m_inout.setDatabase(db);
-     ioInfo.setif_UserNo(personId);
-     ioInfo.setCardTime(QDateTime::currentDateTime());
-     m_inout.addInout(ioInfo);
+    ioInfo.setif_UserNo(personId);
+    ioInfo.setCardTime(QDateTime::currentDateTime());
+    ioInfo.setSeriesId(m_config.seriesId);
+    ioInfo.setFlag(m_config.flag);
+    m_inout.addInout(ioInfo);
 }
 void MainWindow::sendToServer(int personId){
     qDebug("send to server");
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
-    m_hostAddress=QHostAddress("192.168.0.83");
-    m_port=1234;
+    m_hostAddress=QHostAddress(m_config.hostAddress);
+    m_port=m_config.port;
     quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
-    quint8 flag=1;
     out<<quint16(0xAAFF)<<quint8(0x01)<<quint8(0)<<quint32(17)<<m_deviceSN.toAscii()
-      <<quint32(personId)<<quint64(dt)<<flag;
+      <<quint32(personId)<<quint64(dt)<<m_config.flag;
     out.device()->seek(3);
     out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
     udpClient->writeDatagram(block,m_hostAddress,m_port);
@@ -2644,11 +2656,19 @@ void MainWindow::sendToServer2(DBRecord *record)
     l=(unsigned char *)record->leftIrisTemplate().data();
     QByteArray left=record->leftIrisTemplate();
     QByteArray right = record->rightIrisTemplate();
-    out<<quint16(0xCCFF)<<quint8(0x02)<<quint16(0)<<quint32(1)<<quint32(1216)<<left<<right;
+    out<<quint16(0xCCFF)<<quint8(0x02)<<quint16(0)<<quint32(1216)<<quint32(1216)<<left<<right;
     out.device()->seek(3);
-    out<<quint16(block.size()-sizeof(quint16)-sizeof(quint8)*2);
+    out<<quint16(block.size()-sizeof(quint16)*2-sizeof(quint8));
     udpClient->writeDatagram(block,m_hostAddress,m_port);
     out.device()->close();
+}
+
+void MainWindow::doReadingDatagrams(AzIrisInfo &irisInfo)
+{
+    if(m_database.downloadIrisTemplate(irisInfo))
+    {
+
+    }
 }
 
 #endif

@@ -8,10 +8,20 @@ UdpServerThread::UdpServerThread(QObject *parent) :
     connect(&m_udpServer,SIGNAL(readyRead()),this,SLOT(processPendingDatarams()));
 }
 
+UdpServerThread::~UdpServerThread()
+{
+    abort();
+}
+
+void UdpServerThread::abort()
+{
+    m_abort=true;
+    m_udpServer.close();
+}
+
 void UdpServerThread::run()
 {
-
-
+    m_abort=false;
 }
 
 void UdpServerThread::processPendingDatarams()
@@ -20,6 +30,7 @@ void UdpServerThread::processPendingDatarams()
     do{
         data.resize(m_udpServer.pendingDatagramSize());
         m_udpServer.readDatagram(data.data(),data.size());
+
     }while(m_udpServer.hasPendingDatagrams());
 
     QDataStream in(&data,QIODevice::ReadOnly);
@@ -28,12 +39,27 @@ void UdpServerThread::processPendingDatarams()
     AzIrisInfo irisInfo;
     quint16 cmdHead;
 
+    in>>cmdHead;
+    QT_TRY{
+    if(QString::number(cmdHead,16)=="ccff")
+    {
+        in>>irisInfo.command;
+        switch(irisInfo.command)
+        {
+            case 0x02:
+                in>>irisInfo.dataSize>>irisInfo.personId>>irisInfo.if_UserNo>>irisInfo.leftIrisTemplate
+                    >>irisInfo.rightIrisTemplate;
+                irisInfo.commandHead = QString::number(cmdHead,16).toUpper();
+                qDebug()<<irisInfo.commandHead<<quint8(0x02);
+                emit readingDatagrams(irisInfo);
+                break;
+            default:
+            break;
+        }
+    }
+    }QT_CATCH(...){
 
-    in>>cmdHead>>irisInfo.command>>irisInfo.dataSize;
-    in>>irisInfo.pid>>irisInfo.PersonId>>irisInfo.leftIrisTemplate>>irisInfo.rightIrisTemplate;
-    irisInfo.commandHead = QString::number(cmdHead,16).toUpper();
-
-    qDebug()<<irisInfo.commandHead<<QString::number(irisInfo.command,16);
+    }
     in.device()->close();
 }
 

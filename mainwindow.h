@@ -16,6 +16,8 @@
 #include <QUdpSocket>
 #include "inoutinfo.h"
 #include "inoutcontroller.h"
+#include "azirisinfo.h"
+#include "configsettings.h"
 #endif
 //#include <QAudioOutput>
 #include "cmirislib2.h"
@@ -127,6 +129,7 @@ private slots:
     int saveToLocal(int personId);
     void sendToServer(int personId);
     void sendToServer2(DBRecord *record);
+    void doReadingDatagrams(AzIrisInfo &irisInfo);
 #endif
 private:
     Ui::MainWindow *ui;
@@ -147,7 +150,7 @@ private:
     quint16 m_port;
     QString m_deviceSN;
     InoutController m_inout;
-
+    ConfigSettings m_config;
     UdpServerThread *m_udpServerThread;
 #endif
 	CMI_IMAGE_INFO *m_imageInfo;
