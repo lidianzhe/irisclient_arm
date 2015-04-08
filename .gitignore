@@ -1,4 +1,5 @@
 *.o
 include
 lib
+share
 .o
