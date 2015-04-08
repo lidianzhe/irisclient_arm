@@ -1,6 +1,5 @@
 *.o
 include
 lib
-share
 .o
 moc_*
