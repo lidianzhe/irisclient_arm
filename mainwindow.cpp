@@ -1364,14 +1364,18 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 #if defined(_EMALIB)
         EMA_EVENT emaEvent;
         emaEvent.cbSize = sizeof(EMA_EVENT);
-
         emaEvent.eventType = EMA_EVENT_TYPE_RELAY_WRITE;
-
         emaEvent.relayInterval = 30; // unit: 0.1sec
-
         emaEvent.relayValue = EMA_EVENT_VALUE_RELAY_ABNORMAL;
-
+#if defined(_ABDOOR)
+        if(m_gpi1value==EMA_EVENT_VALUE_GPIO_LOW){
+            qDebug()<<"please close A door ,first.";
+        }else{
+            int ret = ema_writeEvent(m_emaHandle, &emaEvent);
+        }
+#else
         int ret = ema_writeEvent(m_emaHandle, &emaEvent);
+#endif
 #endif
 
         record = m_database.m_recordList.at(minId);
@@ -1396,7 +1400,15 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
         }
 
 #if defined(__linux__)
-        system("aplay /usr/local/share/AizheTech/recognized.wav");
+        //system("aplay /usr/local/share/AizheTech/recognized.wav");
+#if defined(_ABDOOR)
+        if(m_gpi1value==EMA_EVENT_VALUE_GPIO_LOW){
+            qDebug()<<"please close A door ,first.";
+            system(QString("aplay %1/closedoor.wav").arg(m_curPath).toStdString().c_str());
+        }
+#else
+           system(QString("aplay %1/recognized.wav").arg(m_curPath).toStdString().c_str());
+#endif
 #else
         qDebug()<<"defined(__linux__)   open and recog";
         QSound::play("./recognized.wav");
@@ -2099,6 +2111,9 @@ void MainWindow::doDataReceived(EMA_EVENT *event) {
 
     case EMA_EVENT_TYPE_GPI12_READ:
         ui->label_EMAEvent->setText("EMA_EVENT_TYPE_GPI12_READ");
+#if defined(_ABDOOR)
+        gpiReading(event);
+#endif
         break;
 
     case EMA_EVENT_TYPE_GPO1_WRITE:
@@ -2669,6 +2684,14 @@ void MainWindow::doReadingDatagrams(AzIrisInfo &irisInfo)
     {
 
     }
+}
+
+void MainWindow::gpiReading(EMA_EVENT *event)
+{
+    //if (event->gpi1Value==EMA_EVENT_VALUE_GPIO_LOW)
+    m_gpi1value= event->gpi1Value;
+    if(m_gpi1value==0)
+    ui->label_EMAEvent->setText(QString("EMA_EVENT_TYPE_GPI1_READ=%1").arg(m_gpi1value));
 }
 
 #endif

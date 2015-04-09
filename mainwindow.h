@@ -131,6 +131,9 @@ private slots:
     void sendToServer2(DBRecord *record);
     void doReadingDatagrams(AzIrisInfo &irisInfo);
 #endif
+#if defined(_ABDOOR)
+    void gpiReading(EMA_EVENT *event);
+#endif
 private:
     Ui::MainWindow *ui;
 
@@ -152,6 +155,9 @@ private:
     InoutController m_inout;
     ConfigSettings m_config;
     UdpServerThread *m_udpServerThread;
+#endif
+#if defined(_ABDOOR)
+    unsigned char m_gpi1value;
 #endif
 	CMI_IMAGE_INFO *m_imageInfo;
 	bool m_isStart;
