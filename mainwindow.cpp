@@ -1382,7 +1382,7 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 
         //<lhj add comment=send to server>
 #if defined(_SENDTOSERVER)
-        int userNo=record->name().toInt();
+        int userNo=record->if_UserNo();
         saveToLocal(userNo);
         sendToServer(userNo);
         //sendToServer2(record);
