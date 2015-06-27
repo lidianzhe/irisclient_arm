@@ -85,7 +85,8 @@ linux-g++ {
     #DEFINES += DEMOTOOLBOX
     #socket support by lhj
     DEFINES += _SENDTOSERVER
-
+   #ABDoor support
+    DEFINES += _ABDOOR
     SOURCES += emaeventthread.cpp
     HEADERS += emaeventthread.h
 
