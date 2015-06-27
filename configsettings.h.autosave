@@ -12,6 +12,8 @@ public:
     quint8 seriesId;
     quint8 flag;
     quint8 mode;
+    bool allowSwitchMode;
+    bool allowEnroll;
 
     void readConfig();
     void setDatabase(QSqlDatabase &db){m_db=db;}

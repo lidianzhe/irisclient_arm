@@ -9,7 +9,6 @@
 ConfigSettings::ConfigSettings()
 {
 }
-
 void ConfigSettings::readConfig()
 {
 
