@@ -40,6 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :
         m_udpServerThread->start();
     }
 #endif
+#if defined(_ABDOOR)
+    m_gpi1value=EMA_EVENT_VALUE_GPIO_HIGH;
+   ui->label_EMAEvent->setText(QString("mEMA_EVENT_TYPE_GPI1_READ=%1").arg(m_gpi1value));
+#endif
     this->setWindowTitle("Acezne Iris Client");
 	// Initialize max Movement values
 	m_maxXYMovementEnrollment = 0.4;
@@ -1370,6 +1374,7 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 #if defined(_ABDOOR)
         if(m_gpi1value==EMA_EVENT_VALUE_GPIO_LOW){
             qDebug()<<"please close A door ,first.";
+            //system(QString("aplay %1/closedoor.wav").arg(m_curPath).toStdString().c_str());
         }else{
             int ret = ema_writeEvent(m_emaHandle, &emaEvent);
         }
@@ -2112,7 +2117,9 @@ void MainWindow::doDataReceived(EMA_EVENT *event) {
     case EMA_EVENT_TYPE_GPI12_READ:
         ui->label_EMAEvent->setText("EMA_EVENT_TYPE_GPI12_READ");
 #if defined(_ABDOOR)
+             //system(QString("aplay %1/closedoor.wav").arg(m_curPath).toStdString().c_str());
         gpiReading(event);
+
 #endif
         break;
 
@@ -2690,7 +2697,7 @@ void MainWindow::gpiReading(EMA_EVENT *event)
 {
     //if (event->gpi1Value==EMA_EVENT_VALUE_GPIO_LOW)
     m_gpi1value= event->gpi1Value;
-    if(m_gpi1value==0)
+    //if(m_gpi1value==0)
     ui->label_EMAEvent->setText(QString("EMA_EVENT_TYPE_GPI1_READ=%1").arg(m_gpi1value));
 }
 
