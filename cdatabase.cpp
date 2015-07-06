@@ -35,7 +35,7 @@ int CDataBase::open() {
     m_db.setDatabaseName("./Enroll.db");
 #else
     //m_db.setDatabaseName("Enroll.db");
-    m_db.setDatabaseName("/usr/local/share/AizheTech/Enroll.db");
+    m_db.setDatabaseName("/usr/local/share/aizhetech/Enroll.db");
 #endif
 
 	if(m_db.open()) {

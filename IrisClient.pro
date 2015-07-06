@@ -82,7 +82,7 @@ linux-g++ {
     LINUX_INCLUDE_DIR = /usr/local/include
     DEFINES += _EMALIB
     #Demo support
-    #DEFINES += DEMOTOOLBOX
+    DEFINES += DEMOTOOLBOX
     #socket support by lhj
     DEFINES += _SENDTOSERVER
    #ABDoor support

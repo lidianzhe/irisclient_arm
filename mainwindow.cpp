@@ -218,7 +218,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 #if defined(_EXYNOS_ARM)
-    m_curPath = "/usr/local/share/AizheTech";
+    m_curPath = "/usr/local/share/aizhetech";
 #else
     m_curPath = QDir::currentPath();
 #endif
@@ -1400,7 +1400,7 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
         }
 
 #if defined(__linux__)
-        //system("aplay /usr/local/share/AizheTech/recognized.wav");
+        //system("aplay /usr/local/share/aizhetech/recognized.wav");
 #if defined(_ABDOOR)
         if(m_gpi1value==EMA_EVENT_VALUE_GPIO_LOW){
             qDebug()<<"please close A door ,first.";
