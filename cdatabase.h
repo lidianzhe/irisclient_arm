@@ -28,6 +28,7 @@ public:
     QSqlDatabase db() {return m_db;}
     bool downloadIrisTemplate(AzIrisInfo &irisInfo);
     bool deletePerson(int personId);
+    bool deleteRecord(int nums);
 #endif
 private:
     QSqlDatabase m_db;

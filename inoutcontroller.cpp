@@ -33,9 +33,10 @@ bool InoutController::addInout(InoutInfo &inout)
 
     QSqlQuery query(m_db);
     query.prepare("insert into InoutDetails("
-                  "DeviceNo,PersonId,CardTime,Flag,SeriesId) values ("
-                  ":DeviceNo,:PersonId,:CardTime,:Flag,:SeriesId)"
+                  "Nums,DeviceNo,PersonId,CardTime,Flag,SeriesId) values ("
+                  ":Nums,:DeviceNo,:PersonId,:CardTime,:Flag,:SeriesId)"
                   );
+    query.bindValue(":Nums",QVariant(inout.nums()));
     query.bindValue(":DeviceNo",QVariant(inout.deviceNo()));
     query.bindValue(":CardTime",QVariant(inout.cardTime()));
     query.bindValue(":Flag",QVariant(inout.flag()));

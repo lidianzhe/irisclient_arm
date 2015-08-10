@@ -211,7 +211,7 @@ bool CDataBase::deletePerson(int personId)
     QSqlQuery query(m_db);
     if(personId==0)
     {
-        QSqlQuery query("delete from enrolltable");
+        query.prepare("delete from enrolltable");
         if (m_recordList.size() != 0) {
             for (int i = 0; i < m_recordList.size(); i++) {
                 delete m_recordList.at(i);
@@ -221,7 +221,7 @@ bool CDataBase::deletePerson(int personId)
     }
     else
     {
-        QSqlQuery query("delete from enrolltable where id="+QString::number(personId));
+        query.prepare("delete from enrolltable where id="+QString::number(personId));
         for (int i = 0; i < m_recordList.size(); i++) {
             if(m_recordList.at(i)->id()==personId){
                 delete m_recordList.at(i);
@@ -235,6 +235,13 @@ bool CDataBase::deletePerson(int personId)
         return true;
     }else
         return false;
+}
+
+bool CDataBase::deleteRecord(int nums)
+{
+    QSqlQuery query("delete from inoutdetails where nums="+QString::number(nums));
+    qDebug()<<"delete record="+QString::number(nums);
+    return query.exec();
 }
 
 

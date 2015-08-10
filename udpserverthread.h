@@ -16,7 +16,8 @@ protected:
 
 signals:
     void readingDatagrams(AzIrisInfo &irisInfo);
-    void deletePerson(int personI);
+    void deletePerson(int personId);
+    void deleteRecord(int nums);
 public slots:
     void processPendingDatarams();
 

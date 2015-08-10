@@ -39,15 +39,17 @@ void UdpServerThread::processPendingDatarams()
 
     AzIrisInfo irisInfo;
     quint16 cmdHead;
+    qint8 command;
 
-    in>>cmdHead;
+    in>>cmdHead>>command;
     QT_TRY{
     if(QString::number(cmdHead,16)=="ccff")
     {
-        in>>irisInfo.command;
-        switch(irisInfo.command)
+        //in>>irisInfo.command;
+        switch(command)
         {
             case 0x02://personinfo
+                irisInfo.command = command;
                 in>>irisInfo.dataSize>>irisInfo.personId>>irisInfo.if_UserNo>>irisInfo.leftIrisTemplate
                     >>irisInfo.rightIrisTemplate;
                 irisInfo.commandHead = QString::number(cmdHead,16).toUpper();
@@ -57,11 +59,27 @@ void UdpServerThread::processPendingDatarams()
             case 0x04://delete
                 in>>irisInfo.dataSize>>irisInfo.personId;
                 qDebug()<<"CC-FF-04";
+
                 emit deletePerson(irisInfo.personId);
                 break;
             default:
             break;
         }
+    }
+    if(QString::number(cmdHead,16)=="ccaa") //answer
+    {
+        switch(command)
+        {
+            case 0x01:
+                qint32 nums;
+                in>>nums;
+                emit deleteRecord(nums);
+
+                break;
+            default:
+            break;
+        }
+
     }
     }QT_CATCH(...){
 

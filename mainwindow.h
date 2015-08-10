@@ -131,6 +131,7 @@ private slots:
     void sendToServer2(DBRecord *record);
     void doReadingDatagrams(AzIrisInfo &irisInfo);
     void doDeletePerson(int personId);
+    void doDeleteRecord(int nums);
 #endif
 #if defined(_ABDOOR)
     void gpiReading(EMA_EVENT *event);
