@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_udpServerThread = new UdpServerThread();
     if(m_udpServerThread){
         connect(m_udpServerThread,SIGNAL(readingDatagrams(AzIrisInfo&)),this,SLOT(doReadingDatagrams(AzIrisInfo&)));
+        connect(m_udpServerThread,SIGNAL(deletePerson(int)),this,SLOT(doDeletePerson(int)));
         m_udpServerThread->start();
     }
 #endif
@@ -1387,8 +1388,8 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 
         //<lhj add comment=send to server>
 #if defined(_SENDTOSERVER)
-        int userNo=record->if_UserNo();
-        saveToLocal(userNo);
+        int userNo=record->id(); //personid
+        //saveToLocal(userNo); call by sendToServer
         sendToServer(userNo);
         //sendToServer2(record);
 #endif
@@ -2639,12 +2640,14 @@ void MainWindow::displaySelectedImages(CMI_IMAGE_INFO *imageInfo, unsigned char 
 
 
 #if defined(_SENDTOSERVER)
-int MainWindow::saveToLocal(int personId)
+int MainWindow::saveToLocal(int personId,int num)
 {
     InoutInfo ioInfo;
     QSqlDatabase db=m_database.db();
     m_inout.setDatabase(db);
-    ioInfo.setif_UserNo(personId);
+    ioInfo.setPid(num);
+    ioInfo.setPersonId(personId);
+    //ioInfo.setif_UserNo(personId);
     ioInfo.setCardTime(QDateTime::currentDateTime());
     ioInfo.setSeriesId(m_config.seriesId);
     ioInfo.setFlag(m_config.flag);
@@ -2658,7 +2661,9 @@ void MainWindow::sendToServer(int personId){
     m_hostAddress=QHostAddress(m_config.hostAddress);
     m_port=m_config.port;
     quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
-    out<<quint16(0xAAFF)<<quint8(0x01)<<quint8(0)<<quint32(17)<<m_deviceSN.toAscii()
+    quint32 num = QDateTime::currentDateTime().toString("ddhhmmss").toInt();
+    saveToLocal(personId,num);
+    out<<quint16(0xAAFF)<<quint8(0x01)<<quint8(0)<<quint32(num)<<m_deviceSN.toAscii()
       <<quint32(personId)<<quint64(dt)<<m_config.flag;
     out.device()->seek(3);
     out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
@@ -2691,6 +2696,11 @@ void MainWindow::doReadingDatagrams(AzIrisInfo &irisInfo)
     {
 
     }
+}
+
+void MainWindow::doDeletePerson(int personId)
+{
+    m_database.deletePerson(personId);
 }
 
 void MainWindow::gpiReading(EMA_EVENT *event)

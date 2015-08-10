@@ -18,7 +18,7 @@ public:
     const QString &rightIrisPath() {return m_rightIrisPath;}
     const QString &faceImagePath() {return m_faceImagePath;}
 
-    const int if_UserNo() {return m_ifUserNo;}
+    //const int personid() {return m_personid;}
 
 
 	void setId(int id) {m_id = id;}
@@ -29,7 +29,7 @@ public:
     void setLeftIrisPath(QString &leftIrisPath) {m_leftIrisPath = leftIrisPath;}
     void setRightIrisPath(QString &rightIrisPath) {m_rightIrisPath = rightIrisPath;}
     void setFaceImagePath(QString &faceImagePath) {m_faceImagePath = faceImagePath;}
-    void setif_UserNo(int no){m_ifUserNo = no;}
+    //void setPersonId(int no){m_personid = no;}
 
 private:
 	int m_id;
@@ -40,7 +40,7 @@ private:
     QString m_leftIrisPath;
     QString m_rightIrisPath;
     QString m_faceImagePath;
-    int m_ifUserNo;
+    //int m_personid;
 };
 
 #endif // DBRECORD_H

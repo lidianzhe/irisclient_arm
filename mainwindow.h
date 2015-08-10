@@ -126,10 +126,11 @@ private slots:
                                unsigned char *rfinalImage, bool showBoundary);
 
 #if defined(_SENDTOSERVER)
-    int saveToLocal(int personId);
+    int saveToLocal(int personId,int num);
     void sendToServer(int personId);
     void sendToServer2(DBRecord *record);
     void doReadingDatagrams(AzIrisInfo &irisInfo);
+    void doDeletePerson(int personId);
 #endif
 #if defined(_ABDOOR)
     void gpiReading(EMA_EVENT *event);

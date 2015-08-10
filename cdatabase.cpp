@@ -83,7 +83,8 @@ int CDataBase::open() {
             record->setRightIrisPath(qstr);
             qstr = query.value(7).toString();
             record->setFaceImagePath(qstr);
-            record->setif_UserNo(query.value(8).toInt());
+
+            //record->setif_UserNo(query.value(8).toInt());
 
 
 			qDebug() << "Loaded Template Size left right" << record->leftIrisTemplate().size() <<
@@ -148,21 +149,23 @@ bool CDataBase::insert(DBRecord &record) {
 
 bool CDataBase::downloadIrisTemplate(AzIrisInfo &irisInfo)
 {
-    QSqlQuery query("select * from enrolltable where name="+QString::number(irisInfo.if_UserNo));
+    QSqlQuery query("select * from enrolltable where id="+QString::number(irisInfo.personId));
     if(query.next())
     {
-        query.prepare("update enrolltable set Id=?, LeftIrisTemplate=?,"
-                      "RightIrisTemplate=? where if_userno="+
-                      QString::number(irisInfo.if_UserNo));
+        query.prepare("update enrolltable set Id=?,Name=?, LeftIrisTemplate=?,"
+                      "RightIrisTemplate=? where id="+
+                      QString::number(irisInfo.personId));
+        query.addBindValue(QVariant(irisInfo.personId));
         query.addBindValue(QVariant(irisInfo.personId));
         query.addBindValue(QVariant(irisInfo.leftIrisTemplate));
         query.addBindValue(QVariant(irisInfo.rightIrisTemplate));
         if(query.exec()){
             for(int i=0;i<m_recordList.size();i++){
-                if(m_recordList.at(i)->if_UserNo()==irisInfo.if_UserNo){
+                if(m_recordList.at(i)->id()==irisInfo.personId){
                     m_recordList.at(i)->setLeftIrisTemplate(irisInfo.leftIrisTemplate);
                     m_recordList.at(i)->setRightIrisTemplate(irisInfo.rightIrisTemplate);
                     m_recordList.at(i)->setId(irisInfo.personId);
+                    i=m_recordList.size();
                 }
             }
             return true;
@@ -175,7 +178,7 @@ bool CDataBase::downloadIrisTemplate(AzIrisInfo &irisInfo)
         query.prepare("INSERT INTO EnrollTable (Id, Name, LeftIrisTemplate, RightIrisTemplate, FaceFeatureTemplate, LeftIrisPath, RightIrisPath, FaceImagePath,if_UserNo)"
                       "values(?,?,?,?,?,?,?,?,?)");
         query.addBindValue(QVariant(irisInfo.personId));
-        query.addBindValue(QVariant(irisInfo.if_UserNo));
+        query.addBindValue(QVariant(irisInfo.personId));
         query.addBindValue(QVariant(irisInfo.leftIrisTemplate));
         query.addBindValue(QVariant(irisInfo.rightIrisTemplate));
 
@@ -183,14 +186,14 @@ bool CDataBase::downloadIrisTemplate(AzIrisInfo &irisInfo)
         query.addBindValue(QVariant(NULL));
         query.addBindValue(QVariant(NULL));
         query.addBindValue(QVariant(NULL));
+        query.addBindValue(QVariant(irisInfo.personId));
 
-        query.addBindValue(QVariant(irisInfo.if_UserNo));
         if(query.exec()){
             DBRecord *newRecord = new DBRecord();
             newRecord->setId(irisInfo.personId);
-            QString name=QString::number(irisInfo.if_UserNo);
+            QString name=QString::number(irisInfo.personId);
             newRecord->setName(name);
-            newRecord->setif_UserNo(irisInfo.if_UserNo);
+            //newRecord->setif_UserNo(irisInfo.if_UserNo);
             newRecord->setLeftIrisTemplate(irisInfo.leftIrisTemplate);
             newRecord->setRightIrisTemplate(irisInfo.rightIrisTemplate);
             m_recordList << newRecord;
@@ -200,8 +203,41 @@ bool CDataBase::downloadIrisTemplate(AzIrisInfo &irisInfo)
             return false;
         }
     }
-
 }
+//----------------------------------------------------------------------------
+bool CDataBase::deletePerson(int personId)
+{
+    qDebug()<<"delete personid="<<personId;
+    QSqlQuery query(m_db);
+    if(personId==0)
+    {
+        QSqlQuery query("delete from enrolltable");
+        if (m_recordList.size() != 0) {
+            for (int i = 0; i < m_recordList.size(); i++) {
+                delete m_recordList.at(i);
+            }
+            m_recordList.clear();
+        }
+    }
+    else
+    {
+        QSqlQuery query("delete from enrolltable where id="+QString::number(personId));
+        for (int i = 0; i < m_recordList.size(); i++) {
+            if(m_recordList.at(i)->id()==personId){
+                delete m_recordList.at(i);
+                m_recordList.removeAt(i);
+                i=m_recordList.size();
+            }
+        }
+    }
+    if(query.exec())
+    {
+        return true;
+    }else
+        return false;
+}
+
+
 
 
 

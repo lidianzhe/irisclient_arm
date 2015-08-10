@@ -38,7 +38,8 @@ HEADERS  += mainwindow.h \
     inoutcontroller.h \
     udpserverthread.h \
     azirisinfo.h \
-    configsettings.h
+    configsettings.h \
+    azsocketinfo.h
 
 FORMS    += mainwindow.ui \
     dialogname.ui
@@ -82,7 +83,7 @@ linux-g++ {
     LINUX_INCLUDE_DIR = /usr/local/include
     DEFINES += _EMALIB
     #Demo support
-    DEFINES += DEMOTOOLBOX
+    #DEFINES += DEMOTOOLBOX
     #socket support by lhj
     DEFINES += _SENDTOSERVER
    #ABDoor support

@@ -10,7 +10,7 @@ public:
     QString commandHead;
     qint8 command;
     qint16 dataSize;
-    qint32 pid;
+    qint32 pid; //
 
     QString deviceSN;
     qint32 personId;
@@ -18,6 +18,7 @@ public:
     QByteArray rightIrisTemplate;
 
     qint32 if_UserNo;
+
 };
 
 #endif // AZIRISINFO_H

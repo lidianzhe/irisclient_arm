@@ -47,12 +47,17 @@ void UdpServerThread::processPendingDatarams()
         in>>irisInfo.command;
         switch(irisInfo.command)
         {
-            case 0x02:
+            case 0x02://personinfo
                 in>>irisInfo.dataSize>>irisInfo.personId>>irisInfo.if_UserNo>>irisInfo.leftIrisTemplate
                     >>irisInfo.rightIrisTemplate;
                 irisInfo.commandHead = QString::number(cmdHead,16).toUpper();
                 qDebug()<<irisInfo.commandHead<<quint8(0x02);
                 emit readingDatagrams(irisInfo);
+                break;
+            case 0x04://delete
+                in>>irisInfo.dataSize>>irisInfo.personId;
+                qDebug()<<"CC-FF-04";
+                emit deletePerson(irisInfo.personId);
                 break;
             default:
             break;

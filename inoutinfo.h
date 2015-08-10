@@ -15,6 +15,7 @@ public:
     const qint8 seriesId() {return m_seriesId;}
     const int if_UserNo(){return m_if_UserNo;}
 
+    void setPid(int pid){m_pid=pid;}
     void setDeviceNo(QString &deviceNo){m_deviceNo=deviceNo;}
     void setPersonId(int personId) {m_personId=personId;}
     void setCardTime(QDateTime cardTime){m_cardTime=cardTime;}
