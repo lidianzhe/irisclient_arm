@@ -5,7 +5,7 @@ UdpServerThread::UdpServerThread(QObject *parent) :
     QThread(parent)
 {
     //m_udpServer.bind(QHostAddress::LocalHost,1234);
-    m_udpServer.bind(1234);
+    m_udpServer.bind(1234,QUdpSocket::ShareAddress);
     connect(&m_udpServer,SIGNAL(readyRead()),this,SLOT(processPendingDatarams()));
 }
 

@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 #if defined(_SENDTOSERVER)
     udpClient= new QUdpSocket(this);
+    udpClient->bind(1234,QUdpSocket::ShareAddress);
     m_udpServerThread = new UdpServerThread();
     if(m_udpServerThread){
         connect(m_udpServerThread,SIGNAL(readingDatagrams(AzIrisInfo&)),this,SLOT(doReadingDatagrams(AzIrisInfo&)));
@@ -2669,7 +2670,9 @@ void MainWindow::sendToServer(int personId){
       <<quint32(personId)<<quint64(dt)<<m_config.flag;
     out.device()->seek(3);
     out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
+
     udpClient->writeDatagram(block,m_hostAddress,m_port);
+    udpClient->writeDatagram(block,QHostAddress("192.168.0.3"),1234);
     out.device()->close();
 
 }
