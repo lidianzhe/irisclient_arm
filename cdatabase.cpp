@@ -244,8 +244,27 @@ bool CDataBase::deleteRecord(int nums)
     return query.exec();
 }
 
+bool CDataBase::updateSettings(ConfigSettings *settings)
+{
+    QSqlQuery query("delete from configsettings");
+    query.exec();
+    query.prepare("insert into configsettings(DeviceId,DeviceNo,HostAddress,HostPort,SeriesId,Mode,AllowSwitchMode,AllowEnroll)"
+                  "values(?,?,?,?,?,?,?,?)");
+    query.addBindValue(QVariant(settings->pid));
+    query.addBindValue(QVariant(settings->deviceSN));
+    query.addBindValue(QVariant(settings->hostAddress));
+    query.addBindValue(QVariant(settings->port));
+    query.addBindValue(QVariant(settings->seriesId));
+    query.addBindValue(QVariant(settings->mode));
+    query.addBindValue(QVariant(settings->allowSwitchMode));
+    query.addBindValue(QVariant(settings->allowEnroll));
+    if(query.exec())
+    {
+        return true;
+    }else
+        return false;
 
-
+}
 
 
 

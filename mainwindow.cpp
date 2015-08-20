@@ -33,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 #if defined(_SENDTOSERVER)
+    m_timer = new QTimer(this);
+    connect(m_timer,SIGNAL(timeout()),this,SLOT(sendHeartbeat()));
+    m_timer->start(1000*60);
     udpClient= new QUdpSocket(this);
     udpClient->bind(1234,QUdpSocket::ShareAddress);
     m_udpServerThread = new UdpServerThread();
@@ -40,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(m_udpServerThread,SIGNAL(readingDatagrams(AzIrisInfo&)),this,SLOT(doReadingDatagrams(AzIrisInfo&)));
         connect(m_udpServerThread,SIGNAL(deletePerson(int)),this,SLOT(doDeletePerson(int)));
         connect(m_udpServerThread,SIGNAL(deleteRecord(int)),this,SLOT(doDeleteRecord(int)));
-
+        connect(m_udpServerThread,SIGNAL(updateSettings(ConfigSettings*)),this,SLOT(doUpdateSettings(ConfigSettings*)));
         m_udpServerThread->start();
     }
 #endif
@@ -653,6 +656,7 @@ void MainWindow::open() {
 }
 
 void MainWindow::recog() {
+
 	ui->statusBar->clearMessage();
 	ui->label_Name->setText("");
 	ui->label_LeftHD->setText("");
@@ -2711,6 +2715,32 @@ void MainWindow::doDeletePerson(int personId)
 void MainWindow::doDeleteRecord(int nums)
 {
     m_database.deleteRecord(nums);
+}
+
+void MainWindow::sendHeartbeat()
+{
+    qDebug("send  heartbeat");
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_8);
+    m_hostAddress=QHostAddress(m_config.hostAddress);
+    m_port=m_config.port;
+
+    out<<quint16(0xAAFF)<<quint8(0x03)<<quint8(0)<<m_deviceSN.toAscii();
+    out.device()->seek(3);
+    out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
+
+    udpClient->writeDatagram(block,m_hostAddress,m_port);
+    udpClient->writeDatagram(block,QHostAddress("192.168.0.3"),1234);
+    out.device()->close();
+}
+
+void MainWindow::doUpdateSettings(ConfigSettings *settings)
+{
+    if(settings->deviceSN==m_deviceSN)
+        m_database.updateSettings(settings);
+    else
+        qDebug()<<"CC-FF-03 "<< settings->deviceSN<<" != "<<"localhost:"<<m_deviceSN;
 }
 
 void MainWindow::gpiReading(EMA_EVENT *event)

@@ -15,7 +15,7 @@ void ConfigSettings::readConfig()
 
     QSqlQuery query(m_db);
     query.setForwardOnly(true);
-    query.exec("select DeviceNo,SeriesId,Mode,HostAddress,HostPort from ConfigSettings limit 1;");
+    query.exec("select DeviceNo,SeriesId,Mode,HostAddress,HostPort,flag from ConfigSettings limit 1;");
     if(query.next()){
         deviceSN = query.value(0).toString();
         seriesId = query.value(1).toInt();
@@ -23,12 +23,17 @@ void ConfigSettings::readConfig()
         flag = (mode==0) ? 0 : 1;
         hostAddress = query.value(3).toString();
         port = query.value(4).toInt();
+        allowSwitchMode=query.value(5).toInt();
+        allowEnroll=query.value(6).toInt();
     }else
     {
         //deviceSN=m_deviceSN;
+        mode=0;
         flag=0;
-        seriesId=2;
-        hostAddress="10.1.121.10";
+        seriesId=2;       
+        hostAddress="192.168.0.200";
         port=1234;
+        allowSwitchMode=0;
+        allowEnroll=0;
     }
 }

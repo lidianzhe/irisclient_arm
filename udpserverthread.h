@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QUdpSocket>
 #include "azirisinfo.h"
+#include "configsettings.h"
 class UdpServerThread : public QThread
 {
     Q_OBJECT
@@ -18,6 +19,7 @@ signals:
     void readingDatagrams(AzIrisInfo &irisInfo);
     void deletePerson(int personId);
     void deleteRecord(int nums);
+    void updateSettings(ConfigSettings *settings);
 public slots:
     void processPendingDatarams();
 

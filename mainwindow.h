@@ -18,6 +18,7 @@
 #include "inoutcontroller.h"
 #include "azirisinfo.h"
 #include "configsettings.h"
+#include <QTimer>
 #endif
 //#include <QAudioOutput>
 #include "cmirislib2.h"
@@ -132,6 +133,8 @@ private slots:
     void doReadingDatagrams(AzIrisInfo &irisInfo);
     void doDeletePerson(int personId);
     void doDeleteRecord(int nums);
+    void sendHeartbeat();
+    void doUpdateSettings(ConfigSettings *settings);
 #endif
 #if defined(_ABDOOR)
     void gpiReading(EMA_EVENT *event);
@@ -157,6 +160,7 @@ private:
     InoutController m_inout;
     ConfigSettings m_config;
     UdpServerThread *m_udpServerThread;
+    QTimer *m_timer;
 #endif
 #if defined(_ABDOOR)
     unsigned char m_gpi1value;

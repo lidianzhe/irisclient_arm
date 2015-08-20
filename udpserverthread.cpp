@@ -41,6 +41,11 @@ void UdpServerThread::processPendingDatarams()
     quint16 cmdHead;
     qint8 command;
 
+    ConfigSettings *settings;
+    quint16 datasize;
+    QByteArray qbaHostAddress;
+    QByteArray qbaDeviceSN;
+
     in>>cmdHead>>command;
     QT_TRY{
     if(QString::number(cmdHead,16)=="ccff")
@@ -55,6 +60,15 @@ void UdpServerThread::processPendingDatarams()
                 irisInfo.commandHead = QString::number(cmdHead,16).toUpper();
                 qDebug()<<irisInfo.commandHead<<quint8(0x02);
                 emit readingDatagrams(irisInfo);
+                break;
+            case 0x03://setting
+                settings= new ConfigSettings();
+                in>>datasize>>settings->pid>>qbaDeviceSN>>qbaHostAddress>>settings->port>>settings->seriesId>>settings->mode>>settings->allowSwitchMode
+                 >>settings->allowEnroll;
+                settings->deviceSN=QString::fromAscii(qbaDeviceSN);
+                settings->hostAddress=QString::fromAscii(qbaHostAddress);
+                emit updateSettings(settings);
+                qDebug()<<"CC-FF-03";
                 break;
             case 0x04://delete
                 in>>irisInfo.dataSize>>irisInfo.personId;

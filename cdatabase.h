@@ -7,6 +7,7 @@
 #if defined(_SENDTOSERVER)
 #include "inoutinfo.h"
 #include "azirisinfo.h"
+#include "configsettings.h"
 #endif
 class QSqlTableModel;
 
@@ -29,6 +30,7 @@ public:
     bool downloadIrisTemplate(AzIrisInfo &irisInfo);
     bool deletePerson(int personId);
     bool deleteRecord(int nums);
+    bool updateSettings(ConfigSettings *settings);
 #endif
 private:
     QSqlDatabase m_db;
