@@ -84,7 +84,7 @@ int CDataBase::open() {
             qstr = query.value(7).toString();
             record->setFaceImagePath(qstr);
 
-            //record->setif_UserNo(query.value(8).toInt());
+            record->setIf_UserNo(query.value(8).toInt());
 
 
 			qDebug() << "Loaded Template Size left right" << record->leftIrisTemplate().size() <<
@@ -135,7 +135,7 @@ bool CDataBase::insert(DBRecord &record) {
     query.bindValue(":LEFT_IRIS_PATH", QVariant(record.leftIrisPath()));
     query.bindValue(":RIGHT_IRIS_PATH", QVariant(record.rightIrisPath()));
     query.bindValue(":FACE_IMAGE_PATH", QVariant(record.faceImagePath()));
-    query.bindValue(":if_UserNo",QVariant(record.name()));
+    query.bindValue(":if_UserNo",QVariant(record.if_UserNo()));
 	if (query.exec()) {
 		DBRecord *newRecord = new DBRecord(record);
 		m_recordList << newRecord;
@@ -153,18 +153,20 @@ bool CDataBase::downloadIrisTemplate(AzIrisInfo &irisInfo)
     if(query.next())
     {
         query.prepare("update enrolltable set Id=?,Name=?, LeftIrisTemplate=?,"
-                      "RightIrisTemplate=? where id="+
+                      "RightIrisTemplate=? ,if_UserNo=? where id="+
                       QString::number(irisInfo.personId));
         query.addBindValue(QVariant(irisInfo.personId));
         query.addBindValue(QVariant(irisInfo.personId));
         query.addBindValue(QVariant(irisInfo.leftIrisTemplate));
         query.addBindValue(QVariant(irisInfo.rightIrisTemplate));
+        query.addBindValue(QVariant(irisInfo.if_UserNo));
         if(query.exec()){
             for(int i=0;i<m_recordList.size();i++){
                 if(m_recordList.at(i)->id()==irisInfo.personId){
                     m_recordList.at(i)->setLeftIrisTemplate(irisInfo.leftIrisTemplate);
                     m_recordList.at(i)->setRightIrisTemplate(irisInfo.rightIrisTemplate);
                     m_recordList.at(i)->setId(irisInfo.personId);
+                    m_recordList.at(i)->setIf_UserNo(irisInfo.if_UserNo);
                     i=m_recordList.size();
                 }
             }
@@ -186,7 +188,7 @@ bool CDataBase::downloadIrisTemplate(AzIrisInfo &irisInfo)
         query.addBindValue(QVariant(NULL));
         query.addBindValue(QVariant(NULL));
         query.addBindValue(QVariant(NULL));
-        query.addBindValue(QVariant(irisInfo.personId));
+        query.addBindValue(QVariant(irisInfo.if_UserNo));
 
         if(query.exec()){
             DBRecord *newRecord = new DBRecord();
@@ -196,6 +198,7 @@ bool CDataBase::downloadIrisTemplate(AzIrisInfo &irisInfo)
             //newRecord->setif_UserNo(irisInfo.if_UserNo);
             newRecord->setLeftIrisTemplate(irisInfo.leftIrisTemplate);
             newRecord->setRightIrisTemplate(irisInfo.rightIrisTemplate);
+            newRecord->setIf_UserNo(irisInfo.if_UserNo);
             m_recordList << newRecord;
             return true;
         }else{

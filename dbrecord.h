@@ -18,7 +18,7 @@ public:
     const QString &rightIrisPath() {return m_rightIrisPath;}
     const QString &faceImagePath() {return m_faceImagePath;}
 
-    //const int personid() {return m_personid;}
+    const int if_UserNo() {return m_if_UserNo;}
 
 
 	void setId(int id) {m_id = id;}
@@ -29,6 +29,7 @@ public:
     void setLeftIrisPath(QString &leftIrisPath) {m_leftIrisPath = leftIrisPath;}
     void setRightIrisPath(QString &rightIrisPath) {m_rightIrisPath = rightIrisPath;}
     void setFaceImagePath(QString &faceImagePath) {m_faceImagePath = faceImagePath;}
+    void setIf_UserNo(int if_UserNo){m_if_UserNo=if_UserNo;}
     //void setPersonId(int no){m_personid = no;}
 
 private:
@@ -40,6 +41,7 @@ private:
     QString m_leftIrisPath;
     QString m_rightIrisPath;
     QString m_faceImagePath;
+    int m_if_UserNo;
     //int m_personid;
 };
 

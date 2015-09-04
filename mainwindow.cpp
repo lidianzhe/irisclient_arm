@@ -650,6 +650,7 @@ void MainWindow::open() {
         break;
 
     case EMA_SUCCESS:
+        settingWeigand(26);
         break;
     }
 #endif
@@ -1373,6 +1374,9 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
 #endif
     }
     else { //success
+
+        record = m_database.m_recordList.at(minId);
+
 #if defined(_EMALIB)
         EMA_EVENT emaEvent;
         emaEvent.cbSize = sizeof(EMA_EVENT);
@@ -1385,13 +1389,13 @@ void MainWindow::doRecog(CMI_IMAGE_INFO *imageInfo) {
             //system(QString("aplay %1/closedoor.wav").arg(m_curPath).toStdString().c_str());
         }else{
             int ret = ema_writeEvent(m_emaHandle, &emaEvent);
+            writeWeigand(record->if_UserNo());
         }
 #else
         int ret = ema_writeEvent(m_emaHandle, &emaEvent);
+        writeWeigand(record->if_UserNo());
 #endif
 #endif
-
-        record = m_database.m_recordList.at(minId);
 
         //<lhj add comment=send to server>
 #if defined(_SENDTOSERVER)
@@ -2676,7 +2680,7 @@ void MainWindow::sendToServer(int personId){
     out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
 
     udpClient->writeDatagram(block,m_hostAddress,m_port);
-    udpClient->writeDatagram(block,QHostAddress("192.168.0.3"),1234);
+    udpClient->writeDatagram(block,QHostAddress("192.168.0.200"),1234);
     out.device()->close();
 
 }
@@ -2742,6 +2746,71 @@ void MainWindow::doUpdateSettings(ConfigSettings *settings)
     else
         qDebug()<<"CC-FF-03 "<< settings->deviceSN<<" != "<<"localhost:"<<m_deviceSN;
 }
+
+void MainWindow::settingWeigand(int numofbits)
+{
+
+        EMA_EVENT Event;
+        Event.cbSize = sizeof(EMA_EVENT);
+
+        Event.wiegandOutChannel = 1;
+        Event.numOfBits = numofbits;
+        Event.pulseWidth = 100;
+        Event.pulseInterval = 1100;
+        m_curEmaConfig = Event;
+        Event.eventType = EMA_EVENT_TYPE_WIEGAND_SET_CONFIG;
+
+        int ret = ema_writeEvent(m_emaHandle, &Event);
+
+        if (ret == 0) {
+            qDebug()<<"Weigand set numofbits="<<numofbits<<" success!\r";
+        }
+        else {
+            qDebug()<<"Weigand set numofbits="<<numofbits<<" fail!\r";
+        }
+}
+
+void MainWindow::writeWeigand(int id)
+{
+    m_curEmaConfig.eventType = EMA_EVENT_TYPE_WIEGAND_WRITE_DATA;
+    //QByteArray ba = QByteArray::fromHex(str.toAscii());
+    QByteArray ba=bindingWeigand(id,m_curEmaConfig.numOfBits);
+
+    int i;
+    for (i = 0; i < ba.size(); i++) {
+        m_curEmaConfig.wiegandData[i] = ba[i];
+    }
+    int ret = ema_writeEvent(m_emaHandle, &m_curEmaConfig);
+
+    if (ret == 0) {
+        qDebug()<<"Weigand Write success";
+    }
+    else {
+        qDebug()<<QString("Weigand Write error return= %1").arg(ret);
+    }
+    return;
+}
+
+QByteArray MainWindow::bindingWeigand(int id, int numOfBits)
+{
+    QString hv=QString::number(id/2,16);
+
+    QByteArray ba =QByteArray::fromHex(hv.toAscii());
+    int n ;
+    if(numOfBits==26)
+        n=3-ba.size();
+    if(numOfBits==34)
+        n=4-ba.size();
+    for(int i=0;i<n;i++){
+        ba.insert(0,'\0');
+    }
+    if(id%2==1)
+        ba.append(255);
+    return ba;
+}
+
+
+
 
 void MainWindow::gpiReading(EMA_EVENT *event)
 {

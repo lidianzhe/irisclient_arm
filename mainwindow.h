@@ -135,6 +135,9 @@ private slots:
     void doDeleteRecord(int nums);
     void sendHeartbeat();
     void doUpdateSettings(ConfigSettings *settings);
+    void settingWeigand(int numofbits);
+    void writeWeigand(int id);
+    QByteArray bindingWeigand(int id,int numOfBits);
 #endif
 #if defined(_ABDOOR)
     void gpiReading(EMA_EVENT *event);
