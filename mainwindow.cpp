@@ -2757,11 +2757,10 @@ void MainWindow::settingWeigand(int numofbits)
         Event.numOfBits = numofbits;
         Event.pulseWidth = 100;
         Event.pulseInterval = 1100;
-        m_curEmaConfig = Event;
         Event.eventType = EMA_EVENT_TYPE_WIEGAND_SET_CONFIG;
 
         int ret = ema_writeEvent(m_emaHandle, &Event);
-
+        m_curEmaConfig = Event;
         if (ret == 0) {
             qDebug()<<"Weigand set numofbits="<<numofbits<<" success!\r";
         }
@@ -2772,15 +2771,27 @@ void MainWindow::settingWeigand(int numofbits)
 
 void MainWindow::writeWeigand(int id)
 {
-    m_curEmaConfig.eventType = EMA_EVENT_TYPE_WIEGAND_WRITE_DATA;
+    EMA_EVENT emaEvent;
+    emaEvent.cbSize = sizeof(EMA_EVENT);
+
+    emaEvent.eventType = EMA_EVENT_TYPE_WIEGAND_WRITE_DATA;
+
+    emaEvent.wiegandOutChannel = m_curEmaConfig.wiegandOutChannel;
+    qDebug() << "Channel" << emaEvent.wiegandOutChannel;
+    emaEvent.numOfBits = m_curEmaConfig.numOfBits;
+    emaEvent.pulseWidth = m_curEmaConfig.pulseWidth;
+    emaEvent.pulseInterval = m_curEmaConfig.pulseInterval;
+
+
+    emaEvent.eventType = EMA_EVENT_TYPE_WIEGAND_WRITE_DATA;
     //QByteArray ba = QByteArray::fromHex(str.toAscii());
     QByteArray ba=bindingWeigand(id,m_curEmaConfig.numOfBits);
 
     int i;
     for (i = 0; i < ba.size(); i++) {
-        m_curEmaConfig.wiegandData[i] = ba[i];
+        emaEvent.wiegandData[i] = ba[i];
     }
-    int ret = ema_writeEvent(m_emaHandle, &m_curEmaConfig);
+    int ret = ema_writeEvent(m_emaHandle, &emaEvent);
 
     if (ret == 0) {
         qDebug()<<"Weigand Write success";
