@@ -31,7 +31,6 @@ void UdpServerThread::processPendingDatarams()
     do{
         data.resize(m_udpServer.pendingDatagramSize());
         m_udpServer.readDatagram(data.data(),data.size());
-
     }while(m_udpServer.hasPendingDatagrams());
 
     QDataStream in(&data,QIODevice::ReadOnly);
@@ -73,7 +72,6 @@ void UdpServerThread::processPendingDatarams()
             case 0x04://delete
                 in>>irisInfo.dataSize>>irisInfo.personId;
                 qDebug()<<"CC-FF-04";
-
                 emit deletePerson(irisInfo.personId);
                 break;
             default:

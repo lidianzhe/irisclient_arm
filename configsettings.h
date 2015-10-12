@@ -7,7 +7,7 @@ class ConfigSettings
 public:
 
     ConfigSettings();    
-    qint32 pid;
+    qint32 pid; //deviceId
     QString deviceSN;
     QString hostAddress;
     quint16 port;
