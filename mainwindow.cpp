@@ -2680,7 +2680,7 @@ void MainWindow::sendToServer(int personId){
     out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
 
     udpClient->writeDatagram(block,m_hostAddress,m_port);
-    udpClient->writeDatagram(block,QHostAddress("192.168.0.200"),1234);
+    udpClient->writeDatagram(block,QHostAddress("192.168.0.3"),1234);
     out.device()->close();
 
 }
