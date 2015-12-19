@@ -1,6 +1,7 @@
 #include "udpserverthread.h"
 #include <QByteArray>
 #include <QDebug>
+#include "runtime.h"
 UdpServerThread::UdpServerThread(QObject *parent) :
     QThread(parent)
 {
@@ -36,25 +37,27 @@ void UdpServerThread::processPendingDatarams()
     QDataStream in(&data,QIODevice::ReadOnly);
     in.setVersion(QDataStream::Qt_4_8);
 
+    AzSocketInfo sockInfo;
+
     AzIrisInfo irisInfo;
-    quint16 cmdHead;
-    qint8 command;
+    //quint16 cmdHead;
+    //qint8 command;
+    //quint16 datasize;
 
     ConfigSettings *settings;
-    quint16 datasize;
     QByteArray qbaHostAddress;
     QByteArray qbaDeviceSN;
 
-    in>>cmdHead>>command;
+    in>>sockInfo.commandHead>>sockInfo.command>>sockInfo.dataSize;
+
     QT_TRY{
-    if(QString::number(cmdHead,16)=="ccff")
+    if(QString::number(sockInfo.commandHead,16)=="ccff")
     {
-        //in>>irisInfo.command;
-        switch(command)
+        switch(sockInfo.command)
         {
             case 0x01://setting
                settings= new ConfigSettings();
-                in>>datasize>>settings->pid>>qbaDeviceSN>>qbaHostAddress>>settings->port>>settings->seriesId>>settings->mode>>settings->allowSwitchMode
+                in>>settings->pid>>qbaDeviceSN>>qbaHostAddress>>settings->port>>settings->seriesId>>settings->mode>>settings->allowSwitchMode
                 >>settings->allowEnroll;
                 settings->deviceSN=QString::fromAscii(qbaDeviceSN);
                 settings->hostAddress=QString::fromAscii(qbaHostAddress);
@@ -62,17 +65,22 @@ void UdpServerThread::processPendingDatarams()
                 qDebug()<<"CC-FF-01";
                 break;
             case 0x02://personinfo
-                irisInfo.command = command;
-                in>>irisInfo.dataSize>>irisInfo.personId>>irisInfo.if_UserNo>>irisInfo.leftIrisTemplate
+                irisInfo.command = sockInfo.command;
+                irisInfo.dataSize = sockInfo.dataSize;
+                in>>irisInfo.personId>>irisInfo.if_UserNo>>irisInfo.leftIrisTemplate
                     >>irisInfo.rightIrisTemplate;
-                irisInfo.commandHead = QString::number(cmdHead,16).toUpper();
+                irisInfo.commandHead = QString::number(sockInfo.commandHead,16).toUpper();
                 qDebug()<<irisInfo.commandHead<<quint8(0x02);
                 emit readingDatagrams(irisInfo);
                 break;
             case 0x03: //Enroll 注册人员
+                dzrun.enrollMode = true;
+                in>>irisInfo.personId>>irisInfo.if_UserNo;
+                qDebug()<<"Enroll person "<<irisInfo.personId;
+                emit enrollPerson(irisInfo);
                 break;
             case 0x04://delete
-                in>>irisInfo.dataSize>>irisInfo.personId;
+                in>>irisInfo.personId;
                 qDebug()<<"CC-FF-04";
                 emit deletePerson(irisInfo.personId);
                 break;
@@ -80,9 +88,9 @@ void UdpServerThread::processPendingDatarams()
             break;
         }
     }
-    if(QString::number(cmdHead,16)=="ccaa") //answer
+    if(QString::number(sockInfo.commandHead,16)=="ccaa") //answer
     {
-        switch(command)
+        switch(sockInfo.command)
         {
             case 0x01:
                 qint32 nums;

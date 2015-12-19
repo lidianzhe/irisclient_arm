@@ -1,12 +1,14 @@
 #ifndef UTILSHELPER_H
 #define UTILSHELPER_H
 #include <stdio.h>
-
-class utilshelper
+#include <azirisinfo.h>
+#include "runtime.h"
+class UtilsHelper
 {
 public:
-    utilshelper();
+    UtilsHelper();
     void setLocalhostIf(const char* ifname,const char* ipaddr,const char* netmask,const char* gateway,const char* dns);
+    void sendEnrollPerson(AzIrisInfo *personInfo);
 };
 
 #endif // UTILSHELPER_H

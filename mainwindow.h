@@ -20,6 +20,7 @@
 #include "configsettings.h"
 #include <QTimer>
 #include "runtime.h"
+#include "utilshelper.h"
 #endif
 
 
@@ -165,9 +166,10 @@ private:
     QString m_deviceSN;
     InoutController m_inout;
     //ConfigSettings m_config;
-    Runtime run;
+    //Runtime run;
     UdpServerThread *m_udpServerThread;
     QTimer *m_timer;
+    UtilsHelper *utils;
 #endif
 
 #if defined(_ABDOOR)

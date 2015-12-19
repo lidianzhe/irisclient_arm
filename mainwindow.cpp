@@ -17,7 +17,7 @@
 #include "qdatetime.h"
 #include <QByteArray>
 #include "udpserverthread.h"
-
+#include "runtime.h"
 #if defined(__linux__)
 #define Sleep(x) usleep(x*1000)
 #endif
@@ -492,7 +492,7 @@ void MainWindow::open() {
     }
 
     //lhj add
-    run.configSettings.readConfig();
+    //dzrun.configSettings.readConfig();
 
 	int curIndex =  ui->comboBox_SerialNumbers->currentIndex();
 	if (curIndex < 0) {
@@ -1160,6 +1160,10 @@ void MainWindow::doEnroll(CMI_IMAGE_INFO *imageInfo) {
     ok = true;
     name = "u" + QString::number( m_database.recordListSize());
 #else
+    if(dzrun.enrollMode){
+        ok=true;
+        name="u"+QString::number(dzrun.enrollPerson->personId);
+    }else
     if (ok = dialogname.exec()) {
         name = dialogname.name();
     }
@@ -1212,18 +1216,31 @@ void MainWindow::doEnroll(CMI_IMAGE_INFO *imageInfo) {
         ////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////
 
+        if(dzrun.enrollMode){
+            record.setId(dzrun.enrollPerson->personId);
+            record.setIf_UserNo(dzrun.enrollPerson->if_UserNo);
+        }
+        //sendback to server
+        if(dzrun.enrollMode){
+            dzrun.enrollPerson->leftIrisTemplate = record.leftIrisTemplate();
+            dzrun.enrollPerson->rightIrisTemplate= record.rightIrisTemplate();
+            utils->sendEnrollPerson(dzrun.enrollPerson);
+            dzrun.enrollMode = false;
+            dzrun.enrollPerson = new AzIrisInfo();
+        }
+
+
         if (!m_database.insert(record)) {
             ui->statusBar->showMessage("Error! fail to enroll templates!");
         }
         else { // success
-#if defined(__linux__)
-
-            system(QString("aplay %1/enrollCompleted.wav").arg(m_curPath).toStdString().c_str());
-#else
-            QSound::play("./enrollCompleted.wav");
-#endif
-
+            #if defined(__linux__)
+                system(QString("aplay %1/enrollCompleted.wav").arg(m_curPath).toStdString().c_str());
+            #else
+                QSound::play("./enrollCompleted.wav");
+            #endif
             ui->statusBar->showMessage(QString("%1 is successfully enrolled!").arg(name));
+
         }
     }
 	else {
@@ -2660,8 +2677,8 @@ int MainWindow::saveToLocal(int personId,int num)
     ioInfo.setNums(num);
     ioInfo.setPersonId(personId);
     ioInfo.setCardTime(QDateTime::currentDateTime());
-    ioInfo.setSeriesId(run.configSettings.seriesId);
-    ioInfo.setFlag(run.configSettings.flag);
+    ioInfo.setSeriesId(dzrun.configSettings.seriesId);
+    ioInfo.setFlag(dzrun.configSettings.flag);
     m_inout.addInout(ioInfo);
 }
 void MainWindow::sendToServer(int personId){
@@ -2669,13 +2686,13 @@ void MainWindow::sendToServer(int personId){
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
-    m_hostAddress=QHostAddress(run.configSettings.hostAddress);
-    m_port=run.configSettings.port;
+    m_hostAddress=QHostAddress(dzrun.configSettings.hostAddress);
+    m_port=dzrun.configSettings.port;
     quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
     quint32 num = QDateTime::currentDateTime().toString("ddhhmmss").toInt();
     saveToLocal(personId,num);
     out<<quint16(0xAAFF)<<quint8(0x01)<<quint8(0)<<quint32(num)<<m_deviceSN.toAscii()
-      <<quint32(personId)<<quint64(dt)<<run.configSettings.flag;
+      <<quint32(personId)<<quint64(dt)<<dzrun.configSettings.flag;
     out.device()->seek(3);
     out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
 
@@ -2727,8 +2744,8 @@ void MainWindow::sendHeartbeat()
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
-    m_hostAddress=QHostAddress(run.configSettings.hostAddress);
-    m_port=run.configSettings.port;
+    m_hostAddress=QHostAddress(dzrun.configSettings.hostAddress);
+    m_port=dzrun.configSettings.port;
 
     out<<quint16(0xAAFF)<<quint8(0x03)<<quint8(0)<<m_deviceSN.toAscii();
     out.device()->seek(3);
