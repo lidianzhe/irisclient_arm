@@ -28,7 +28,8 @@ SOURCES += mainwindow.cpp \
     azirisinfo.cpp \
     configsettings.cpp \
     utilshelper.cpp \
-    runtime.cpp
+    runtime.cpp \
+    azsocketinfo.cpp
 
 HEADERS  += mainwindow.h \
     cdatabase.h \
@@ -41,9 +42,9 @@ HEADERS  += mainwindow.h \
     udpserverthread.h \
     azirisinfo.h \
     configsettings.h \
-    azsocketinfo.h \
     utilshelper.h \
-    runtime.h
+    runtime.h \
+    azsocketinfo.h
 
 FORMS    += mainwindow.ui \
     dialogname.ui
