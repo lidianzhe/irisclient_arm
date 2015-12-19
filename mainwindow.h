@@ -19,7 +19,10 @@
 #include "azirisinfo.h"
 #include "configsettings.h"
 #include <QTimer>
+#include "runtime.h"
 #endif
+
+
 //#include <QAudioOutput>
 #include "cmirislib2.h"
 #if defined(_EMALIB)
@@ -161,10 +164,12 @@ private:
     quint16 m_port;
     QString m_deviceSN;
     InoutController m_inout;
-    ConfigSettings m_config;
+    //ConfigSettings m_config;
+    Runtime run;
     UdpServerThread *m_udpServerThread;
     QTimer *m_timer;
 #endif
+
 #if defined(_ABDOOR)
     unsigned char m_gpi1value;
 #endif

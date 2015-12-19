@@ -3,10 +3,10 @@
 #include "configsettings.h"
 #include "azirisinfo.h"
 
-class runtime
+class Runtime
 {
 public:
-    runtime();
+    Runtime();
     ConfigSettings configSettings;
 };
 
