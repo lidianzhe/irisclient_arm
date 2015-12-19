@@ -52,6 +52,15 @@ void UdpServerThread::processPendingDatarams()
         //in>>irisInfo.command;
         switch(command)
         {
+            case 0x01://setting
+               settings= new ConfigSettings();
+                in>>datasize>>settings->pid>>qbaDeviceSN>>qbaHostAddress>>settings->port>>settings->seriesId>>settings->mode>>settings->allowSwitchMode
+                >>settings->allowEnroll;
+                settings->deviceSN=QString::fromAscii(qbaDeviceSN);
+                settings->hostAddress=QString::fromAscii(qbaHostAddress);
+                emit updateSettings(settings);
+                qDebug()<<"CC-FF-01";
+                break;
             case 0x02://personinfo
                 irisInfo.command = command;
                 in>>irisInfo.dataSize>>irisInfo.personId>>irisInfo.if_UserNo>>irisInfo.leftIrisTemplate
@@ -60,14 +69,7 @@ void UdpServerThread::processPendingDatarams()
                 qDebug()<<irisInfo.commandHead<<quint8(0x02);
                 emit readingDatagrams(irisInfo);
                 break;
-            case 0x03://setting
-                settings= new ConfigSettings();
-                in>>datasize>>settings->pid>>qbaDeviceSN>>qbaHostAddress>>settings->port>>settings->seriesId>>settings->mode>>settings->allowSwitchMode
-                 >>settings->allowEnroll;
-                settings->deviceSN=QString::fromAscii(qbaDeviceSN);
-                settings->hostAddress=QString::fromAscii(qbaHostAddress);
-                emit updateSettings(settings);
-                qDebug()<<"CC-FF-03";
+            case 0x03: //Enroll 注册人员
                 break;
             case 0x04://delete
                 in>>irisInfo.dataSize>>irisInfo.personId;
