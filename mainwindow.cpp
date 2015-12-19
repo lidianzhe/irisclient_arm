@@ -492,7 +492,7 @@ void MainWindow::open() {
     }
 
     //lhj add
-    m_config.readConfig();
+    run.configSettings.readConfig();
 
 	int curIndex =  ui->comboBox_SerialNumbers->currentIndex();
 	if (curIndex < 0) {
@@ -2660,8 +2660,8 @@ int MainWindow::saveToLocal(int personId,int num)
     ioInfo.setNums(num);
     ioInfo.setPersonId(personId);
     ioInfo.setCardTime(QDateTime::currentDateTime());
-    ioInfo.setSeriesId(m_config.seriesId);
-    ioInfo.setFlag(m_config.flag);
+    ioInfo.setSeriesId(run.configSettings.seriesId);
+    ioInfo.setFlag(run.configSettings.flag);
     m_inout.addInout(ioInfo);
 }
 void MainWindow::sendToServer(int personId){
@@ -2669,13 +2669,13 @@ void MainWindow::sendToServer(int personId){
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
-    m_hostAddress=QHostAddress(m_config.hostAddress);
-    m_port=m_config.port;
+    m_hostAddress=QHostAddress(run.configSettings.hostAddress);
+    m_port=run.configSettings.port;
     quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
     quint32 num = QDateTime::currentDateTime().toString("ddhhmmss").toInt();
     saveToLocal(personId,num);
     out<<quint16(0xAAFF)<<quint8(0x01)<<quint8(0)<<quint32(num)<<m_deviceSN.toAscii()
-      <<quint32(personId)<<quint64(dt)<<m_config.flag;
+      <<quint32(personId)<<quint64(dt)<<run.configSettings.flag;
     out.device()->seek(3);
     out<<quint8(block.size()-sizeof(quint16)-sizeof(quint8)*2);
 
@@ -2727,8 +2727,8 @@ void MainWindow::sendHeartbeat()
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
-    m_hostAddress=QHostAddress(m_config.hostAddress);
-    m_port=m_config.port;
+    m_hostAddress=QHostAddress(run.configSettings.hostAddress);
+    m_port=run.configSettings.port;
 
     out<<quint16(0xAAFF)<<quint8(0x03)<<quint8(0)<<m_deviceSN.toAscii();
     out.device()->seek(3);
