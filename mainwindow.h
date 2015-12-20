@@ -142,6 +142,7 @@ private slots:
     void settingWeigand(int numofbits);
     void writeWeigand(int id);
     QByteArray bindingWeigand(int id,int numOfBits);
+    void doEnrollPerson(AzIrisInfo &personInfo);
 #endif
 #if defined(_ABDOOR)
     void gpiReading(EMA_EVENT *event);

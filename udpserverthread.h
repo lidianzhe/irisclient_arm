@@ -7,6 +7,7 @@
 #include "azirisinfo.h"
 #include "configsettings.h"
 #include "runtime.h"
+#include <QHostAddress>
 class UdpServerThread : public QThread
 {
     Q_OBJECT

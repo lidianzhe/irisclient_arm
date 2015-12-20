@@ -5,7 +5,8 @@ Runtime dzrun;
 Runtime::Runtime()
 {
     this->enrollMode=false;
-    this->configSettings.readConfig();
+    this->enrollPerson = new AzIrisInfo();
+    //this->configSettings.readConfig();
 }
 
 

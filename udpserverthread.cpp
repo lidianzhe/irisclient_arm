@@ -8,6 +8,7 @@ UdpServerThread::UdpServerThread(QObject *parent) :
     //m_udpServer.bind(QHostAddress::LocalHost,1234);
     m_udpServer.bind(1234,QUdpSocket::ShareAddress);
     connect(&m_udpServer,SIGNAL(readyRead()),this,SLOT(processPendingDatarams()));
+
 }
 
 UdpServerThread::~UdpServerThread()
@@ -75,7 +76,10 @@ void UdpServerThread::processPendingDatarams()
                 break;
             case 0x03: //Enroll 注册人员
                 dzrun.enrollMode = true;
-                in>>irisInfo.personId>>irisInfo.if_UserNo;
+                in>>irisInfo.pid>>irisInfo.personId>>irisInfo.if_UserNo;
+
+                dzrun.enrollPerson->personId = irisInfo.personId;
+                dzrun.enrollPerson->if_UserNo = irisInfo.if_UserNo;
                 qDebug()<<"Enroll person "<<irisInfo.personId;
                 emit enrollPerson(irisInfo);
                 break;

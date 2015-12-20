@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 #if defined(_SENDTOSERVER)
+
     m_timer = new QTimer(this);
     connect(m_timer,SIGNAL(timeout()),this,SLOT(sendHeartbeat()));
     m_timer->start(1000*60);
@@ -44,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(m_udpServerThread,SIGNAL(deletePerson(int)),this,SLOT(doDeletePerson(int)));
         connect(m_udpServerThread,SIGNAL(deleteRecord(int)),this,SLOT(doDeleteRecord(int)));
         connect(m_udpServerThread,SIGNAL(updateSettings(ConfigSettings*)),this,SLOT(doUpdateSettings(ConfigSettings*)));
+        connect(m_udpServerThread,SIGNAL(enrollPerson(AzIrisInfo&)),this,SLOT(doEnrollPerson(AzIrisInfo&)));
         m_udpServerThread->start();
     }
 #endif
@@ -234,8 +236,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_curPath = QDir::currentPath();
 #endif
 
-    //open();
-    //recog();
+
 }
 
 MainWindow::~MainWindow()
@@ -492,7 +493,7 @@ void MainWindow::open() {
     }
 
     //lhj add
-    //dzrun.configSettings.readConfig();
+    dzrun.configSettings.readConfig();
 
 	int curIndex =  ui->comboBox_SerialNumbers->currentIndex();
 	if (curIndex < 0) {
@@ -1227,6 +1228,8 @@ void MainWindow::doEnroll(CMI_IMAGE_INFO *imageInfo) {
             utils->sendEnrollPerson(dzrun.enrollPerson);
             dzrun.enrollMode = false;
             dzrun.enrollPerson = new AzIrisInfo();
+
+            recog();
         }
 
 
@@ -2758,9 +2761,10 @@ void MainWindow::sendHeartbeat()
 
 void MainWindow::doUpdateSettings(ConfigSettings *settings)
 {
-    if(settings->deviceSN==m_deviceSN)
+    if(settings->deviceSN==m_deviceSN){
         m_database.updateSettings(settings);
-    else
+        dzrun.configSettings.readConfig();
+    }else
         qDebug()<<"CC-FF-03 "<< settings->deviceSN<<" != "<<"localhost:"<<m_deviceSN;
 }
 
@@ -2835,6 +2839,11 @@ QByteArray MainWindow::bindingWeigand(int id, int numOfBits)
     if(id%2==1)
         ba.append(255);
     return ba;
+}
+
+void MainWindow::doEnrollPerson(AzIrisInfo &personInfo)
+{
+    enroll();
 }
 
 
