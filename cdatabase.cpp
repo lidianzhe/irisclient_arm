@@ -123,8 +123,12 @@ void CDataBase::close() {
 
 bool CDataBase::insert(DBRecord &record) {
 
-	QSqlQuery query(m_db);
-
+    //QSqlQuery query(m_db);
+    QSqlQuery query("select * from enrolltable where id="+QString::number(record.id()));
+    if(query.next())
+    {
+        deletePerson(record.id());
+    }
     query.prepare("INSERT INTO EnrollTable (Id, Name, LeftIrisTemplate, RightIrisTemplate, FaceFeatureTemplate, LeftIrisPath, RightIrisPath, FaceImagePath,if_UserNo)"
                       "VALUES (:ID, :NAME, :LEFT_IRIS_TEMPLATE, :RIGHT_IRIS_TEMPLATE, :FACE_FEATURE_TEMPLATE, :LEFT_IRIS_PATH, :RIGHT_IRIS_PATH, :FACE_IMAGE_PATH,:if_UserNo)");
 	query.bindValue(":ID", QVariant(record.id()));

@@ -1,6 +1,7 @@
 #include "runtime.h"
 
 Runtime dzrun;
+QUdpSocket *udpClient;
 
 Runtime::Runtime()
 {

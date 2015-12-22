@@ -161,7 +161,7 @@ private:
     int m_increment;
 #endif
 #if defined(_SENDTOSERVER)
-    QUdpSocket *udpClient;
+    //QUdpSocket *udpClient;
     QHostAddress m_hostAddress;
     quint16 m_port;
     QString m_deviceSN;

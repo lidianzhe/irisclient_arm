@@ -36,23 +36,23 @@ void UtilsHelper::sendEnrollPerson(AzIrisInfo *personInfo)
     quint16 m_port;
 
     qDebug("send enroll person to server");
-    /*
+
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
     m_hostAddress=QHostAddress(dzrun.configSettings.hostAddress);
     m_port=dzrun.configSettings.port;
-    quint64 dt=QDateTime::currentDateTime().toString("yyyyMMddhhmm").toLongLong();
+
     quint32 num = QDateTime::currentDateTime().toString("ddhhmmss").toInt();
 
-    out<<quint16(0xAAFF)<<quint8(0x02)<<quint16(0)<<quint32(num)
-      <<quint32(personInfo->personId)<<quint32(personInfo->if_UserNo);
+    out<<quint16(0xAAFF)<<quint8(0x02)<<quint16(0)<<quint32(num)<<dzrun.configSettings.deviceSN.toAscii()
+      <<quint32(personInfo->personId)<<quint32(personInfo->if_UserNo)<<personInfo->leftIrisTemplate<<personInfo->rightIrisTemplate;
     out.device()->seek(3);
     out<<quint16(block.size()-sizeof(quint16)-sizeof(quint8)-sizeof(quint16));
 
     udpClient->writeDatagram(block,m_hostAddress,m_port);
-    udpClient->writeDatagram(block,QHostAddress("192.168.0.3"),1234);
+    //udpClient->writeDatagram(block,QHostAddress("192.168.0.3"),1234);
     out.device()->close();
-*/
+
 }
 

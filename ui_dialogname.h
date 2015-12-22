@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'dialogname.ui'
 **
-** Created: Sat Dec 19 17:18:20 2015
+** Created: Mon Dec 21 00:13:10 2015
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

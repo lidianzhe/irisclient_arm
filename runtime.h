@@ -2,7 +2,7 @@
 #define RUNTIME_H
 #include "configsettings.h"
 #include "azirisinfo.h"
-
+#include <QUdpSocket>
 
 class Runtime
 {
@@ -16,5 +16,5 @@ public:
 };
 
 extern Runtime dzrun;
-
+extern QUdpSocket *udpClient;
 #endif // RUNTIME_H
